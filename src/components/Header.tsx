@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import zapLogo from "@/assets/zap-logo.png";
 
 const navItems = [
   { label: "Home", href: "/", active: true },
