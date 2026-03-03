@@ -32,12 +32,7 @@ const Header = () => {
       <div className="container flex items-center justify-between h-16 md:h-20">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2 group">
-          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-accent">
-            <Zap className="w-5 h-5 text-accent-foreground" />
-          </div>
-          <span className="text-xl font-bold tracking-tight text-nav-foreground">
-            Zap <span className="text-accent">Technologies</span>
-          </span>
+          <img src={zapLogo} alt="Zap Technologies" className="h-10 w-auto" />
         </a>
 
         {/* Desktop Nav */}
