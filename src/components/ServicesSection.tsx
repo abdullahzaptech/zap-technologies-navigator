@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Globe, Smartphone, Lightbulb, Cloud } from "lucide-react";
+import { Globe, Smartphone, Palette, Wrench, PenTool, Megaphone, Search, BrainCircuit, Bot } from "lucide-react";
 
 const services = [
   {
@@ -13,14 +13,39 @@ const services = [
     description: "Seamless apps for iOS and Android that users love.",
   },
   {
-    icon: Lightbulb,
-    title: "IT Consulting",
-    description: "Strategic IT solutions that drive business success and efficiency.",
+    icon: Palette,
+    title: "UI/UX Design",
+    description: "Intuitive and beautiful interfaces that delight users.",
   },
   {
-    icon: Cloud,
-    title: "Cloud Solutions",
-    description: "Efficient and secure cloud-based infrastructure for scale.",
+    icon: Wrench,
+    title: "Website Maintenance & Services",
+    description: "Reliable upkeep and support to keep your site running smoothly.",
+  },
+  {
+    icon: PenTool,
+    title: "Graphic Design",
+    description: "Stunning visuals and branding that make a lasting impression.",
+  },
+  {
+    icon: Megaphone,
+    title: "Digital Marketing",
+    description: "Data-driven campaigns that grow your reach and revenue.",
+  },
+  {
+    icon: Search,
+    title: "Search Engine Optimisation",
+    description: "Boost your rankings and drive organic traffic to your site.",
+  },
+  {
+    icon: Bot,
+    title: "AI Based App",
+    description: "Intelligent applications powered by cutting-edge AI technology.",
+  },
+  {
+    icon: BrainCircuit,
+    title: "AI Based SaaS Products",
+    description: "Scalable AI-driven software solutions for modern businesses.",
   },
 ];
 
