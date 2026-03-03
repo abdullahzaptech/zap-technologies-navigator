@@ -1,17 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-import heroBg from "@/assets/hero-bg.png";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroBg})` }}
-      />
-      {/* Blue gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/40 via-primary/20 to-nav/90" />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-nav">
+      {/* Gradient background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(217_90%_25%)_0%,_hsl(220_40%_10%)_60%,_hsl(220_30%_6%)_100%)]" />
+      {/* Subtle network dots overlay */}
+      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_20%_30%,_hsl(217_90%_60%)_0%,_transparent_50%),radial-gradient(circle_at_80%_70%,_hsl(217_90%_50%)_0%,_transparent_40%)]" />
 
       {/* Content */}
       <div className="relative z-10 container text-center px-4 py-32">
@@ -20,7 +16,7 @@ const HeroSection = () => {
           <span className="text-accent">Innovative Technology</span>
         </h1>
 
-        <p className="mt-6 text-lg sm:text-xl text-primary-foreground/80 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-6 text-lg sm:text-xl text-primary-foreground/70 max-w-2xl mx-auto leading-relaxed">
           Custom software development, mobile apps, and cloud-based solutions that accelerate growth.
         </p>
 
@@ -31,7 +27,7 @@ const HeroSection = () => {
           <Button
             variant="outline"
             size="lg"
-            className="rounded-full px-8 text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+            className="rounded-full px-8 text-base bg-primary-foreground text-nav font-semibold border-none hover:bg-primary-foreground/90 hover:text-nav"
           >
             See Our Work
           </Button>
