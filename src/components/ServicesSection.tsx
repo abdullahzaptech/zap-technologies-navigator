@@ -3,51 +3,15 @@ import { Globe, Smartphone, Palette, Wrench, PenTool, Megaphone, Search, BrainCi
 import { motion } from "framer-motion";
 
 const services = [
-  {
-    icon: Globe,
-    title: "Web Development",
-    description: "Responsive websites designed to convert visitors into loyal customers.",
-  },
-  {
-    icon: Smartphone,
-    title: "Mobile App Development",
-    description: "Seamless apps for iOS and Android that users love.",
-  },
-  {
-    icon: Palette,
-    title: "UI/UX Design",
-    description: "Intuitive and beautiful interfaces that delight users.",
-  },
-  {
-    icon: Wrench,
-    title: "Website Maintenance & Services",
-    description: "Reliable upkeep and support to keep your site running smoothly.",
-  },
-  {
-    icon: PenTool,
-    title: "Graphic Design",
-    description: "Stunning visuals and branding that make a lasting impression.",
-  },
-  {
-    icon: Megaphone,
-    title: "Digital Marketing",
-    description: "Data-driven campaigns that grow your reach and revenue.",
-  },
-  {
-    icon: Search,
-    title: "Search Engine Optimisation",
-    description: "Boost your rankings and drive organic traffic to your site.",
-  },
-  {
-    icon: Bot,
-    title: "AI Based App",
-    description: "Intelligent applications powered by cutting-edge AI technology.",
-  },
-  {
-    icon: BrainCircuit,
-    title: "AI Based SaaS Products",
-    description: "Scalable AI-driven software solutions for modern businesses.",
-  },
+  { icon: Globe, title: "Web Development", slug: "web-development", description: "Responsive websites designed to convert visitors into loyal customers." },
+  { icon: Smartphone, title: "Mobile App Development", slug: "mobile-app-development", description: "Seamless apps for iOS and Android that users love." },
+  { icon: Palette, title: "UI/UX Design", slug: "ui-ux-design", description: "Intuitive and beautiful interfaces that delight users." },
+  { icon: Wrench, title: "Website Maintenance & Services", slug: "website-maintenance", description: "Reliable upkeep and support to keep your site running smoothly." },
+  { icon: PenTool, title: "Graphic Design", slug: "graphic-design", description: "Stunning visuals and branding that make a lasting impression." },
+  { icon: Megaphone, title: "Digital Marketing", slug: "digital-marketing", description: "Data-driven campaigns that grow your reach and revenue." },
+  { icon: Search, title: "Search Engine Optimisation", slug: "seo", description: "Boost your rankings and drive organic traffic to your site." },
+  { icon: Bot, title: "AI Based App", slug: "ai-based-app", description: "Intelligent applications powered by cutting-edge AI technology." },
+  { icon: BrainCircuit, title: "AI Based SaaS Products", slug: "ai-based-saas", description: "Scalable AI-driven software solutions for modern businesses." },
 ];
 
 const ServicesSection = () => {
@@ -100,13 +64,10 @@ const ServicesSection = () => {
         {/* Services Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {services.map((service, i) => (
-            <motion.div
+            <a
               key={service.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="group relative rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 overflow-hidden"
+              href={`/services/${service.slug}`}
+              className="group relative rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 overflow-hidden block"
             >
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-accent group-hover:text-accent-foreground">
                 <service.icon className="h-8 w-8" />
@@ -117,14 +78,13 @@ const ServicesSection = () => {
               <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                 {service.description}
               </p>
-              {/* Hover CTA */}
               <div className="opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                <Button variant="link" className="text-primary font-semibold p-0 h-auto group/btn">
+                <span className="text-primary font-semibold text-sm inline-flex items-center gap-1">
                   Learn More
-                  <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover/btn:translate-x-1" />
-                </Button>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </span>
               </div>
-            </motion.div>
+            </a>
           ))}
         </div>
 
