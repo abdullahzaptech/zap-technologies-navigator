@@ -10,7 +10,7 @@ const quickLinks = [
 ];
 
 const legalLinks = [
-  { label: "Privacy Policy", href: "#" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
   { label: "Terms & Conditions", href: "#" },
   { label: "Cookie Policy", href: "#" },
 ];
