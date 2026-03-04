@@ -120,11 +120,33 @@ const Pricing = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [form, setForm] = useState({ name: "", email: "", service: "", scope: "", budget: "", timeline: "" });
 
+  const submitMutation = useMutation({
+    mutationFn: async (data: typeof form) => {
+      const { error } = await supabase.from('form_queries').insert({
+        name: data.name,
+        email: data.email,
+        subject: `Quote Request: ${data.service || 'General'}`,
+        message: [
+          data.scope ? `Scope: ${data.scope}` : '',
+          data.budget ? `Budget: ${data.budget}` : '',
+          data.timeline ? `Timeline: ${data.timeline}` : '',
+        ].filter(Boolean).join('\n'),
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Quote request received!", description: "We'll review your requirements and get back to you within 24 hours." });
+      setForm({ name: "", email: "", service: "", scope: "", budget: "", timeline: "" });
+    },
+    onError: (e: Error) => {
+      toast({ title: "Error", description: e.message, variant: "destructive" });
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email) return;
-    toast({ title: "Quote request received!", description: "We'll review your requirements and get back to you within 24 hours." });
-    setForm({ name: "", email: "", service: "", scope: "", budget: "", timeline: "" });
+    submitMutation.mutate(form);
   };
 
   return (
