@@ -4,6 +4,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { servicePages } from "@/data/serviceDetailData";
 
 interface ServiceDetail {
   icon: LucideIcon;
@@ -211,7 +212,7 @@ const ServiceDetailSection = ({ service, index }: { service: ServiceDetail; inde
           </div>
 
           <Button variant="cta" className="group" asChild>
-            <a href={`/services/${service.title.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "and")}`}>
+            <a href={`/services/${servicePages.find(sp => sp.title === service.title)?.slug || service.title.toLowerCase().replace(/[\s/]+/g, "-")}`}>
               Learn More
               <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
             </a>
