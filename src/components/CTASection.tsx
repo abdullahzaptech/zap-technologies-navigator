@@ -93,9 +93,8 @@ const CTASection = () => {
               <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
             </Button>
             <Button
-              variant="outline"
               size="lg"
-              className="text-base px-8 py-6 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+              className="text-base px-8 py-6 bg-primary-foreground text-primary font-bold hover:bg-primary-foreground/90 shadow-md"
             >
               View Our Work
             </Button>
