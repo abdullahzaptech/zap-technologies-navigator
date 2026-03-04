@@ -1,0 +1,326 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Check, Star, ArrowRight, Send, CreditCard, Clock, DollarSign, ChevronDown, ChevronUp, Zap, Globe, Smartphone, Headphones } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { useToast } from "@/hooks/use-toast";
+
+const webPackages = [
+  {
+    name: "Basic",
+    subtitle: "Perfect for small businesses and startups",
+    price: "$2,500",
+    popular: false,
+    delivery: "2–4 weeks",
+    features: ["Simple 5-page website", "Responsive design", "Basic SEO setup", "Hosting setup", "Contact form", "1 round of revisions"],
+  },
+  {
+    name: "Standard",
+    subtitle: "For businesses looking to expand online",
+    price: "$5,000 – $8,000",
+    popular: true,
+    delivery: "4–6 weeks",
+    features: ["Custom website design", "Up to 10 pages", "Advanced SEO", "CMS integration", "E-commerce setup", "Analytics dashboard", "3 rounds of revisions"],
+  },
+  {
+    name: "Premium",
+    subtitle: "Complex functionality and features",
+    price: "$10,000 – $20,000",
+    popular: false,
+    delivery: "6–8 weeks",
+    features: ["Full custom development", "Up to 20+ pages", "Advanced integrations", "Full e-commerce", "Performance optimization", "Ongoing support (3 months)", "Unlimited revisions"],
+  },
+];
+
+const mobilePackages = [
+  {
+    name: "Basic App",
+    subtitle: "Ideal for small mobile applications",
+    price: "$5,000",
+    delivery: "4–6 weeks",
+    features: ["One platform (iOS or Android)", "Basic user interface", "Core functionality", "App store submission"],
+  },
+  {
+    name: "Custom App",
+    subtitle: "Custom features for growing businesses",
+    price: "$10,000 – $20,000",
+    delivery: "6–8 weeks",
+    features: ["Two platforms (iOS & Android)", "Custom UI/UX design", "API integrations", "User authentication", "Push notifications"],
+  },
+  {
+    name: "Enterprise App",
+    subtitle: "Large-scale apps with advanced integrations",
+    price: "$25,000 – $50,000+",
+    delivery: "8+ weeks",
+    features: ["Multi-platform (iOS & Android)", "Enterprise integrations", "User management system", "Payment gateway", "Admin dashboard", "Priority support"],
+  },
+];
+
+const consultingPackages = [
+  { name: "Hourly Consulting", price: "$150/hour", desc: "For short-term advisory, code reviews, and strategy sessions." },
+  { name: "Project-Based", price: "$3,000+ per project", desc: "Business IT audits, software recommendations, strategy planning, and technology roadmaps." },
+];
+
+const paymentTerms = [
+  { icon: DollarSign, title: "Upfront Deposit", desc: "For most projects, we require a 30% upfront deposit before work begins." },
+  { icon: Clock, title: "Milestone Payments", desc: "For project-based work, payments are tied to clear milestones throughout the development process." },
+  { icon: CreditCard, title: "Accepted Methods", desc: "We accept bank transfers, PayPal, credit cards, and other major payment methods." },
+];
+
+const faqs = [
+  { q: "What is included in the pricing?", a: "Our pricing covers design, development, testing, and launch of your project. Any additional features or services will be discussed and billed separately." },
+  { q: "Do you offer discounts for long-term projects?", a: "Yes! We offer discounts for long-term engagements or recurring projects. Contact us to discuss the specifics." },
+  { q: "What happens if I change the scope after we start?", a: "We will discuss any changes and adjust the timeline or price accordingly, ensuring both parties are aligned before proceeding." },
+  { q: "Can I pay in installments?", a: "Yes, for larger projects we offer payment plans with milestones to help manage your budget effectively." },
+  { q: "Is there a refund policy?", a: "We offer refunds for work not yet started. Once development begins, refunds are prorated based on completed milestones." },
+];
+
+const PricingCard = ({ pkg, index }: { pkg: typeof webPackages[0]; index: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ delay: index * 0.1 }}
+    className={`relative rounded-2xl border p-6 sm:p-8 flex flex-col ${
+      pkg.popular
+        ? "border-primary bg-primary/[0.03] shadow-lg ring-2 ring-primary/20"
+        : "border-border bg-card"
+    }`}
+  >
+    {pkg.popular && (
+      <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground border-0 px-4">
+        <Star className="w-3 h-3 mr-1" /> Most Popular
+      </Badge>
+    )}
+    <h3 className="text-xl font-bold text-foreground">{pkg.name}</h3>
+    <p className="text-sm text-muted-foreground mt-1 mb-4">{pkg.subtitle}</p>
+    <p className="text-3xl font-bold text-primary mb-1">{pkg.price}</p>
+    <p className="text-xs text-muted-foreground mb-6 flex items-center gap-1"><Clock className="w-3 h-3" /> {pkg.delivery}</p>
+    <ul className="space-y-3 mb-8 flex-1">
+      {pkg.features.map((f) => (
+        <li key={f} className="flex items-start gap-2 text-sm text-foreground/80">
+          <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" /> {f}
+        </li>
+      ))}
+    </ul>
+    <Button variant={pkg.popular ? "cta" : "outline"} className="rounded-full w-full" asChild>
+      <a href="/contact">Get Started</a>
+    </Button>
+  </motion.div>
+);
+
+const Pricing = () => {
+  const { toast } = useToast();
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [form, setForm] = useState({ name: "", email: "", service: "", scope: "", budget: "", timeline: "" });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.email) return;
+    toast({ title: "Quote request received!", description: "We'll review your requirements and get back to you within 24 hours." });
+    setForm({ name: "", email: "", service: "", scope: "", budget: "", timeline: "" });
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+
+      {/* Hero */}
+      <section className="relative pt-28 pb-16 md:pt-36 md:pb-24 bg-gradient-to-br from-primary via-primary/90 to-primary/70 overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          {[...Array(4)].map((_, i) => (
+            <motion.div key={i} className="absolute rounded-full bg-background" style={{ width: 90 + i * 50, height: 90 + i * 50, top: `${10 + i * 20}%`, right: `${5 + i * 12}%` }} animate={{ y: [0, -18, 0], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 5 + i, repeat: Infinity }} />
+          ))}
+        </div>
+        <div className="container px-4 relative z-10 text-center">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
+            <Badge className="bg-background/20 text-primary-foreground border-0 mb-4">Pricing</Badge>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-foreground mb-4">Transparent Pricing for Your Project</h1>
+            <p className="text-primary-foreground/80 max-w-2xl mx-auto text-base sm:text-lg">
+              At Zap Technologies, we believe in transparency. Our pricing models are designed to meet your business needs while delivering exceptional results. Explore our options or request a tailored quote.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Web Development Packages */}
+      <section className="py-16 md:py-20">
+        <div className="container px-4">
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-3"><Globe className="w-8 h-8 text-primary" /></div>
+            <h2 className="text-3xl font-bold text-foreground mb-2">Web Development</h2>
+            <p className="text-muted-foreground max-w-lg mx-auto">Choose the package that fits your web development needs</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {webPackages.map((pkg, i) => <PricingCard key={pkg.name} pkg={pkg} index={i} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* Mobile App Packages */}
+      <section className="py-16 md:py-20 bg-secondary">
+        <div className="container px-4">
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-3"><Smartphone className="w-8 h-8 text-primary" /></div>
+            <h2 className="text-3xl font-bold text-foreground mb-2">Mobile App Development</h2>
+            <p className="text-muted-foreground max-w-lg mx-auto">Native and cross-platform mobile solutions</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {mobilePackages.map((pkg, i) => <PricingCard key={pkg.name} pkg={{ ...pkg, popular: i === 1 }} index={i} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* IT Consulting */}
+      <section className="py-16 md:py-20">
+        <div className="container px-4">
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-3"><Headphones className="w-8 h-8 text-primary" /></div>
+            <h2 className="text-3xl font-bold text-foreground mb-2">IT Consulting</h2>
+            <p className="text-muted-foreground max-w-lg mx-auto">Expert guidance for your technology decisions</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {consultingPackages.map((pkg, i) => (
+              <motion.div key={pkg.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+                <h3 className="text-xl font-bold text-foreground mb-1">{pkg.name}</h3>
+                <p className="text-2xl font-bold text-primary mb-3">{pkg.price}</p>
+                <p className="text-sm text-muted-foreground mb-6">{pkg.desc}</p>
+                <Button variant="outline" className="rounded-full w-full" asChild><a href="/contact">Inquire Now</a></Button>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Custom Solutions Form */}
+      <section className="py-16 md:py-20 bg-secondary">
+        <div className="container px-4">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-10">
+              <Zap className="w-8 h-8 text-accent mx-auto mb-3" />
+              <h2 className="text-3xl font-bold text-foreground mb-2">Custom Solutions for Your Unique Needs</h2>
+              <p className="text-muted-foreground">Not all projects fit predefined packages. Tell us about yours and we'll create a tailored quote.</p>
+            </div>
+            <motion.form initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} onSubmit={handleSubmit} className="bg-card rounded-2xl border border-border p-6 sm:p-8 space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Name *</label>
+                  <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Your name" required />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Email *</label>
+                  <Input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="you@company.com" required />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Type of Service</label>
+                <select value={form.service} onChange={e => setForm({ ...form, service: e.target.value })} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                  <option value="">Select a service</option>
+                  <option>Web Development</option>
+                  <option>Mobile App Development</option>
+                  <option>IT Consulting</option>
+                  <option>UI/UX Design</option>
+                  <option>Custom Software</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Project Scope</label>
+                <textarea value={form.scope} onChange={e => setForm({ ...form, scope: e.target.value })} placeholder="Describe your project requirements..." rows={3} className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Budget Range</label>
+                  <select value={form.budget} onChange={e => setForm({ ...form, budget: e.target.value })} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <option value="">Select budget</option>
+                    <option>Under $5,000</option>
+                    <option>$5,000 – $10,000</option>
+                    <option>$10,000 – $25,000</option>
+                    <option>$25,000 – $50,000</option>
+                    <option>$50,000+</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Timeline</label>
+                  <select value={form.timeline} onChange={e => setForm({ ...form, timeline: e.target.value })} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <option value="">Select timeline</option>
+                    <option>ASAP</option>
+                    <option>1–2 months</option>
+                    <option>3–6 months</option>
+                    <option>6+ months</option>
+                  </select>
+                </div>
+              </div>
+              <Button variant="cta" type="submit" className="rounded-full px-8 w-full sm:w-auto">
+                <Send className="w-4 h-4 mr-2" /> Request a Quote
+              </Button>
+            </motion.form>
+          </div>
+        </div>
+      </section>
+
+      {/* Payment Terms */}
+      <section className="py-16 md:py-20">
+        <div className="container px-4">
+          <h2 className="text-3xl font-bold text-foreground text-center mb-10">Payment Terms</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {paymentTerms.map((t, i) => (
+              <motion.div key={t.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center p-6">
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <t.icon className="w-7 h-7 text-primary" />
+                </div>
+                <h3 className="font-bold text-foreground mb-2">{t.title}</h3>
+                <p className="text-sm text-muted-foreground">{t.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-16 md:py-20 bg-secondary">
+        <div className="container px-4 max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-foreground text-center mb-10">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqs.map((faq, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-xl border border-border overflow-hidden">
+                <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between p-5 text-left">
+                  <span className="font-semibold text-foreground text-sm sm:text-base pr-4">{faq.q}</span>
+                  {openFaq === i ? <ChevronUp className="w-5 h-5 text-muted-foreground shrink-0" /> : <ChevronDown className="w-5 h-5 text-muted-foreground shrink-0" />}
+                </button>
+                {openFaq === i && <div className="px-5 pb-5 text-sm text-muted-foreground leading-relaxed">{faq.a}</div>}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 bg-gradient-to-br from-primary to-primary/80">
+        <div className="container px-4 text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <h2 className="text-3xl sm:text-4xl font-bold text-primary-foreground mb-4">Ready to Get Started?</h2>
+            <p className="text-primary-foreground/80 max-w-xl mx-auto mb-8">
+              Still unsure about pricing? Let's discuss your project in detail and find the best solution for your budget.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button variant="cta" size="lg" className="rounded-full px-8" asChild>
+                <a href="/contact">Request a Quote <ArrowRight className="w-4 h-4 ml-2" /></a>
+              </Button>
+              <Button variant="outline" size="lg" className="rounded-full px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10" asChild>
+                <a href="/contact">Contact Us for Details</a>
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default Pricing;
