@@ -4,11 +4,11 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { servicePages } from "@/data/serviceDetailData";
 
 interface ServiceDetail {
   icon: LucideIcon;
   title: string;
+  slug: string;
   intro: string;
   features: string[];
   process: { step: string; desc: string }[];
@@ -18,6 +18,7 @@ const servicesData: ServiceDetail[] = [
   {
     icon: Globe,
     title: "Web Development",
+    slug: "web-development",
     intro: "We build dynamic, high-performance websites that help businesses grow by enhancing their online presence. Our web development team utilizes cutting-edge technologies to ensure scalability, speed, and user engagement.",
     features: [
       "Responsive web design",
@@ -36,6 +37,7 @@ const servicesData: ServiceDetail[] = [
   {
     icon: Smartphone,
     title: "Mobile App Development",
+    slug: "mobile-app-development",
     intro: "We create intuitive, feature-rich mobile applications for iOS and Android that deliver seamless user experiences and drive business growth through mobile-first strategies.",
     features: [
       "Native iOS & Android development",
@@ -54,6 +56,7 @@ const servicesData: ServiceDetail[] = [
   {
     icon: Palette,
     title: "UI/UX Design",
+    slug: "ui-ux-design",
     intro: "We design intuitive, visually stunning interfaces that delight users and drive conversions. Our human-centered design approach ensures every interaction feels natural and purposeful.",
     features: [
       "User research & persona development",
@@ -72,6 +75,7 @@ const servicesData: ServiceDetail[] = [
   {
     icon: Wrench,
     title: "Website Maintenance & Services",
+    slug: "website-maintenance",
     intro: "Keep your website running at peak performance with our comprehensive maintenance services. We handle updates, security, backups, and optimization so you can focus on your business.",
     features: [
       "Regular security updates & patches",
@@ -90,6 +94,7 @@ const servicesData: ServiceDetail[] = [
   {
     icon: PenTool,
     title: "Graphic Design",
+    slug: "graphic-design",
     intro: "From brand identity to marketing collateral, we create stunning visual designs that communicate your brand story and make a lasting impression on your audience.",
     features: [
       "Logo & brand identity design",
@@ -108,6 +113,7 @@ const servicesData: ServiceDetail[] = [
   {
     icon: Megaphone,
     title: "Digital Marketing",
+    slug: "digital-marketing",
     intro: "Drive measurable growth with data-driven digital marketing strategies. We help you reach the right audience, at the right time, with the right message across all digital channels.",
     features: [
       "Social media marketing & management",
@@ -126,6 +132,7 @@ const servicesData: ServiceDetail[] = [
   {
     icon: Search,
     title: "Search Engine Optimisation",
+    slug: "seo",
     intro: "Boost your organic visibility and drive qualified traffic with our comprehensive SEO services. We use proven strategies to improve your rankings and grow your online presence.",
     features: [
       "Technical SEO audit & fixes",
@@ -144,6 +151,7 @@ const servicesData: ServiceDetail[] = [
   {
     icon: Bot,
     title: "AI Based App",
+    slug: "ai-based-app",
     intro: "Leverage the power of artificial intelligence to build intelligent applications that automate processes, enhance decision-making, and deliver personalized user experiences.",
     features: [
       "Custom AI/ML model development",
@@ -162,6 +170,7 @@ const servicesData: ServiceDetail[] = [
   {
     icon: BrainCircuit,
     title: "AI Based SaaS Products",
+    slug: "ai-based-saas",
     intro: "We build scalable, AI-powered SaaS platforms that transform industries. From ideation to launch, we deliver intelligent software products that generate recurring revenue and solve real problems.",
     features: [
       "Multi-tenant SaaS architecture",
@@ -212,7 +221,7 @@ const ServiceDetailSection = ({ service, index }: { service: ServiceDetail; inde
           </div>
 
           <Button variant="cta" className="group" asChild>
-            <a href={`/services/${servicePages.find(sp => sp.title === service.title)?.slug || service.title.toLowerCase().replace(/[\s/]+/g, "-")}`}>
+            <a href={`/services/${service.slug}`}>
               Learn More
               <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
             </a>
