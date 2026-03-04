@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const clientLogos = [
   "TechCorp",
@@ -19,6 +20,7 @@ const testimonials = [
     name: "Sarah Mitchell",
     role: "CEO, TechCorp",
     initials: "SM",
+    rating: 5,
   },
   {
     quote:
@@ -26,6 +28,7 @@ const testimonials = [
     name: "James Anderson",
     role: "CTO, InnovateCo",
     initials: "JA",
+    rating: 5,
   },
   {
     quote:
@@ -33,6 +36,7 @@ const testimonials = [
     name: "Priya Sharma",
     role: "Product Manager, CloudNine",
     initials: "PS",
+    rating: 5,
   },
 ];
 
@@ -51,21 +55,27 @@ const ClientsTestimonialsSection = () => {
   const next = () => setCurrent((c) => (c + 1) % testimonials.length);
 
   return (
-    <section className="py-24 bg-secondary/50">
+    <section className="py-24 bg-muted/40">
       <div className="container px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
           <p className="text-sm font-semibold tracking-widest uppercase text-primary mb-2">
-            Our Clients
+            Testimonials
           </p>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
-            Trusted by Leading Brands
+            What Our Clients Say
           </h2>
+          <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+            Real stories from real clients — see the impact our work has had on businesses like yours.
+          </p>
           <div className="mt-4 mx-auto w-16 h-1 rounded-full bg-accent" />
         </div>
 
         {/* Client Logos */}
         <div className="max-w-5xl mx-auto mb-20">
+          <p className="text-center text-sm font-semibold tracking-widest uppercase text-muted-foreground mb-8">
+            Trusted by Leading Brands
+          </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             {clientLogos.map((name) => (
               <div
@@ -84,6 +94,13 @@ const ClientsTestimonialsSection = () => {
         <div className="max-w-3xl mx-auto">
           <div className="relative rounded-2xl border border-border bg-card p-8 sm:p-12 text-center shadow-sm">
             <Quote className="mx-auto mb-6 h-10 w-10 text-primary/20" />
+
+            {/* Star Rating */}
+            <div className="flex justify-center gap-1 mb-6">
+              {Array.from({ length: testimonials[current].rating }).map((_, i) => (
+                <Star key={i} className="h-5 w-5 fill-accent text-accent" />
+              ))}
+            </div>
 
             <p className="text-lg sm:text-xl leading-relaxed text-foreground/90 italic mb-8">
               "{testimonials[current].quote}"
@@ -134,6 +151,13 @@ const ClientsTestimonialsSection = () => {
                 aria-label={`Go to testimonial ${i + 1}`}
               />
             ))}
+          </div>
+
+          {/* CTA */}
+          <div className="text-center mt-10">
+            <Button variant="outline" size="lg">
+              Read More Testimonials
+            </Button>
           </div>
         </div>
       </div>
