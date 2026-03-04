@@ -99,10 +99,14 @@ const ServicesSection = () => {
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {services.map((service) => (
-            <div
+          {services.map((service, i) => (
+            <motion.div
               key={service.title}
-              className="group relative rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+              className="group relative rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 overflow-hidden"
             >
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-accent group-hover:text-accent-foreground">
                 <service.icon className="h-8 w-8" />
@@ -110,17 +114,24 @@ const ServicesSection = () => {
               <h3 className="text-lg font-bold text-card-foreground mb-3">
                 {service.title}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                 {service.description}
               </p>
-            </div>
+              {/* Hover CTA */}
+              <div className="opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <Button variant="link" className="text-primary font-semibold p-0 h-auto group/btn">
+                  Learn More
+                  <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover/btn:translate-x-1" />
+                </Button>
+              </div>
+            </motion.div>
           ))}
         </div>
 
         {/* CTA */}
         <div className="text-center mt-14">
           <Button size="lg" className="rounded-full px-8 text-base">
-            Explore Our Services
+            Explore All Services
           </Button>
         </div>
       </div>
