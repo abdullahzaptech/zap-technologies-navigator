@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useMutation } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Mail, Phone, MapPin, Clock, Send, ChevronDown,
   Linkedin, Twitter, Facebook, Instagram, MessageSquare,
@@ -18,6 +20,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 /* ─── Data ─── */
 const contactInfo = [
@@ -90,14 +93,37 @@ const Contact = () => {
   const handleChange = (field: string, value: string) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
 
+  const submitMutation = useMutation({
+    mutationFn: async (data: typeof formData) => {
+      const { error } = await supabase.from('form_queries').insert({
+        name: data.name,
+        email: data.email,
+        subject: data.inquiryType || null,
+        message: [
+          data.message,
+          data.phone ? `Phone: ${data.phone}` : '',
+          data.budget ? `Budget: ${data.budget}` : '',
+          data.timeline ? `Timeline: ${data.timeline}` : '',
+        ].filter(Boolean).join('\n'),
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Message sent!", description: "We'll get back to you within 24 hours." });
+      setFormData({ name: "", email: "", phone: "", inquiryType: "", budget: "", timeline: "", message: "" });
+    },
+    onError: (e: Error) => {
+      toast({ title: "Error", description: e.message, variant: "destructive" });
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
       toast({ title: "Missing fields", description: "Please fill in name, email, and message.", variant: "destructive" });
       return;
     }
-    toast({ title: "Message sent!", description: "We'll get back to you within 24 hours." });
-    setFormData({ name: "", email: "", phone: "", inquiryType: "", budget: "", timeline: "", message: "" });
+    submitMutation.mutate(formData);
   };
 
   return (
@@ -215,8 +241,8 @@ const Contact = () => {
                 <Textarea id="message" placeholder="Tell us about your project or inquiry..." rows={5} value={formData.message} onChange={(e) => handleChange("message", e.target.value)} required maxLength={2000} />
               </div>
 
-              <Button type="submit" variant="cta" size="lg" className="w-full sm:w-auto rounded-full px-10 text-base gap-2">
-                <Send className="w-4 h-4" /> Send Message
+              <Button type="submit" variant="cta" size="lg" className="w-full sm:w-auto rounded-full px-10 text-base gap-2" disabled={submitMutation.isPending}>
+                {submitMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />} {submitMutation.isPending ? 'Sending...' : 'Send Message'}
               </Button>
             </motion.form>
 

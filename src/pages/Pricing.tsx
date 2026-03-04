@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Star, ArrowRight, Send, CreditCard, Clock, DollarSign, ChevronDown, ChevronUp, Zap, Globe, Smartphone, Headphones } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Check, Star, ArrowRight, Send, CreditCard, Clock, DollarSign, ChevronDown, ChevronUp, Zap, Globe, Smartphone, Headphones, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import type { Json } from "@/integrations/supabase/types";
 
 const webPackages = [
   {
@@ -117,11 +120,33 @@ const Pricing = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [form, setForm] = useState({ name: "", email: "", service: "", scope: "", budget: "", timeline: "" });
 
+  const submitMutation = useMutation({
+    mutationFn: async (data: typeof form) => {
+      const { error } = await supabase.from('form_queries').insert({
+        name: data.name,
+        email: data.email,
+        subject: `Quote Request: ${data.service || 'General'}`,
+        message: [
+          data.scope ? `Scope: ${data.scope}` : '',
+          data.budget ? `Budget: ${data.budget}` : '',
+          data.timeline ? `Timeline: ${data.timeline}` : '',
+        ].filter(Boolean).join('\n'),
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Quote request received!", description: "We'll review your requirements and get back to you within 24 hours." });
+      setForm({ name: "", email: "", service: "", scope: "", budget: "", timeline: "" });
+    },
+    onError: (e: Error) => {
+      toast({ title: "Error", description: e.message, variant: "destructive" });
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email) return;
-    toast({ title: "Quote request received!", description: "We'll review your requirements and get back to you within 24 hours." });
-    setForm({ name: "", email: "", service: "", scope: "", budget: "", timeline: "" });
+    submitMutation.mutate(form);
   };
 
   return (
@@ -254,8 +279,8 @@ const Pricing = () => {
                   </select>
                 </div>
               </div>
-              <Button variant="cta" type="submit" className="rounded-full px-8 w-full sm:w-auto">
-                <Send className="w-4 h-4 mr-2" /> Request a Quote
+              <Button variant="cta" type="submit" className="rounded-full px-8 w-full sm:w-auto" disabled={submitMutation.isPending}>
+                {submitMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />} {submitMutation.isPending ? 'Sending...' : 'Request a Quote'}
               </Button>
             </motion.form>
           </div>
