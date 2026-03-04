@@ -21,16 +21,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
-import {
-  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
-} from "@/components/ui/accordion";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { useToast } from "@/hooks/use-toast";
 
 /* ─── Data ─── */
 const contactInfo = [
