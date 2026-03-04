@@ -15,31 +15,15 @@ const testimonials = [
 
 const AboutAchievements = () => {
   return (
-    <section className="relative py-28 overflow-hidden">
-      {/* Blue gradient bg */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-[hsl(230,70%,30%)]" />
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{ y: [0, -14, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-16 right-[10%] h-20 w-20 rounded-full border border-primary-foreground/10 bg-primary-foreground/5 backdrop-blur-sm"
-        />
-        <motion.div
-          animate={{ y: [0, 16, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-20 left-[8%] h-24 w-24 rounded-2xl border border-primary-foreground/10 bg-primary-foreground/5 backdrop-blur-sm rotate-12"
-        />
-      </div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-accent/8 blur-[120px]" />
-
-      <div className="container px-4 relative z-10">
+    <section className="py-24 bg-secondary/40">
+      <div className="container px-4">
         {/* Header */}
         <div className="text-center mb-16">
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-sm font-semibold tracking-widest uppercase text-accent mb-2"
+            className="text-sm font-semibold tracking-widest uppercase text-primary mb-2"
           >
             What We've Achieved
           </motion.p>
@@ -48,7 +32,7 @@ const AboutAchievements = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-foreground"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground"
           >
             Our Success Stories
           </motion.h2>
@@ -64,13 +48,13 @@ const AboutAchievements = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="text-center rounded-2xl border border-primary-foreground/10 bg-primary-foreground/5 p-6 backdrop-blur-sm transition-all duration-300 hover:bg-primary-foreground/10"
+              className="text-center rounded-2xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary/20"
             >
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/20 text-accent">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <item.icon className="h-6 w-6" />
               </div>
-              <h3 className="font-bold text-primary-foreground text-sm mb-2">{item.title}</h3>
-              <p className="text-xs text-primary-foreground/60 leading-relaxed">{item.description}</p>
+              <h3 className="font-bold text-foreground text-sm mb-2">{item.title}</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
             </motion.div>
           ))}
         </div>
@@ -84,13 +68,13 @@ const AboutAchievements = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: 0.4 + i * 0.1 }}
-              className="rounded-2xl border border-primary-foreground/10 bg-primary-foreground/5 p-6 backdrop-blur-sm"
+              className="rounded-2xl border border-border bg-card p-6 shadow-sm"
             >
-              <Quote className="h-8 w-8 text-accent/40 mb-4" />
-              <p className="text-sm text-primary-foreground/80 italic leading-relaxed mb-4">"{t.quote}"</p>
+              <Quote className="h-8 w-8 text-primary/20 mb-4" />
+              <p className="text-sm text-muted-foreground italic leading-relaxed mb-4">"{t.quote}"</p>
               <div>
-                <p className="font-semibold text-primary-foreground text-sm">{t.name}</p>
-                <p className="text-xs text-primary-foreground/50">{t.role}</p>
+                <p className="font-semibold text-foreground text-sm">{t.name}</p>
+                <p className="text-xs text-muted-foreground">{t.role}</p>
               </div>
             </motion.div>
           ))}
