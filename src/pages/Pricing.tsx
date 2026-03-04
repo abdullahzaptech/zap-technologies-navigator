@@ -200,6 +200,8 @@ const Pricing = () => {
                 ))}
               </div>
             </div>
+          </section>
+
       {/* Custom Solutions Form */}
       <section className="py-16 md:py-20 bg-secondary">
         <div className="container px-4">
