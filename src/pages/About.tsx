@@ -1,0 +1,25 @@
+import Header from "@/components/Header";
+import AboutHero from "@/components/about/AboutHero";
+import AboutMission from "@/components/about/AboutMission";
+import AboutValues from "@/components/about/AboutValues";
+import AboutTeam from "@/components/about/AboutTeam";
+import WhyChooseUsSection from "@/components/WhyChooseUsSection";
+import CTASection from "@/components/CTASection";
+import Footer from "@/components/Footer";
+
+const About = () => {
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <AboutHero />
+      <AboutMission />
+      <AboutValues />
+      <AboutTeam />
+      <WhyChooseUsSection />
+      <CTASection />
+      <Footer />
+    </div>
+  );
+};
+
+export default About;
