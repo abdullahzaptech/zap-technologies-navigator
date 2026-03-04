@@ -107,7 +107,7 @@ const AdminLinks = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Category</Label>
-                    <Select value={form.category} onValueChange={v => setForm({ ...form, category: v as 'header' | 'footer' | 'external' })}>
+                    <Select value={form.category} onValueChange={v => setForm({ ...form, category: v as LinkCategory })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="header">Header</SelectItem>
