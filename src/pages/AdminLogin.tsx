@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,13 +14,24 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, isAdmin, user } = useAuth();
+  const [signInComplete, setSignInComplete] = useState(false);
+  const { signIn, isAdmin, user, loading } = useAuth();
   const navigate = useNavigate();
 
+  // After sign-in completes, wait for isAdmin to resolve then redirect
+  useEffect(() => {
+    if (signInComplete && user && isAdmin) {
+      navigate('/admin/dashboard', { replace: true });
+    } else if (signInComplete && user && !isAdmin && !loading) {
+      setError('Your account does not have admin privileges.');
+      setIsLoading(false);
+      setSignInComplete(false);
+    }
+  }, [signInComplete, user, isAdmin, loading, navigate]);
+
   // If already logged in as admin, redirect
-  if (user && isAdmin) {
-    navigate('/admin/dashboard', { replace: true });
-    return null;
+  if (!loading && user && isAdmin) {
+    return <Navigate to="/admin/dashboard" replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,13 +58,8 @@ const AdminLogin = () => {
       return;
     }
 
-    // Re-check admin role after sign in
-    // The auth state change will update isAdmin, but we need to wait
-    // Small delay to allow auth state to propagate
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate('/admin/dashboard', { replace: true });
-    }, 1000);
+    // Mark sign-in as complete; the useEffect will handle redirect once isAdmin updates
+    setSignInComplete(true);
   };
 
   return (
