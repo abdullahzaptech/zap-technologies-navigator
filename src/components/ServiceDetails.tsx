@@ -220,8 +220,8 @@ const ServiceDetailSection = ({ service, index }: { service: ServiceDetail; inde
             ))}
           </div>
 
-          <Button variant="cta" className="group" asChild>
-            <a href={`/services/${service.slug}`}>
+          <Button variant="cta" className="group relative z-10" asChild>
+            <a href={`/services/${service.slug}`} onClick={(e) => { e.stopPropagation(); window.location.href = `/services/${service.slug}`; }}>
               Learn More
               <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
             </a>
