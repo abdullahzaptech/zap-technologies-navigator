@@ -18,7 +18,8 @@ type ManagedLink = {
   category: 'header' | 'footer' | 'external'; sort_order: number | null;
 };
 
-const defaultForm = { name: '', url: '', target: '_self', category: 'header' as const, sort_order: 0 };
+type LinkCategory = 'header' | 'footer' | 'external';
+const defaultForm = { name: '', url: '', target: '_self', category: 'header' as LinkCategory, sort_order: 0 };
 
 const AdminLinks = () => {
   const [search, setSearch] = useState('');
