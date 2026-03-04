@@ -14,7 +14,7 @@ import zapLogo from '@/assets/zap-logo.png';
 const menuItems = [
   { title: 'Dashboard', url: '/admin/dashboard', icon: LayoutDashboard },
   { title: 'Blog', url: '/admin/blog', icon: FileText },
-  { title: 'Pricing', url: '/admin/pricing', icon: DollarSign },
+  
   { title: 'Queries', url: '/admin/queries', icon: MessageSquare },
   { title: 'Links', url: '/admin/links', icon: Link2 },
   { title: 'Content', url: '/admin/content', icon: Layout },
