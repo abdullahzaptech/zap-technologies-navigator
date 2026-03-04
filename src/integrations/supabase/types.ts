@@ -14,16 +14,263 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          record_id: string | null
+          table_name: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          record_id?: string | null
+          table_name?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          record_id?: string | null
+          table_name?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      blog_posts: {
+        Row: {
+          author_name: string | null
+          author_role: string | null
+          category: string | null
+          content: string | null
+          created_at: string
+          excerpt: string | null
+          featured: boolean
+          featured_image: string | null
+          id: string
+          publish_date: string | null
+          published: boolean
+          read_time: string | null
+          slug: string
+          tags: Json | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_name?: string | null
+          author_role?: string | null
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          featured?: boolean
+          featured_image?: string | null
+          id?: string
+          publish_date?: string | null
+          published?: boolean
+          read_time?: string | null
+          slug: string
+          tags?: Json | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string | null
+          author_role?: string | null
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          featured?: boolean
+          featured_image?: string | null
+          id?: string
+          publish_date?: string | null
+          published?: boolean
+          read_time?: string | null
+          slug?: string
+          tags?: Json | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      form_queries: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          status: Database["public"]["Enums"]["query_status"]
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          status?: Database["public"]["Enums"]["query_status"]
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          status?: Database["public"]["Enums"]["query_status"]
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      managed_links: {
+        Row: {
+          category: Database["public"]["Enums"]["link_category"]
+          created_at: string
+          id: string
+          name: string
+          sort_order: number | null
+          target: string | null
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["link_category"]
+          created_at?: string
+          id?: string
+          name: string
+          sort_order?: number | null
+          target?: string | null
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["link_category"]
+          created_at?: string
+          id?: string
+          name?: string
+          sort_order?: number | null
+          target?: string | null
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      pricing_packages: {
+        Row: {
+          category: string | null
+          created_at: string
+          delivery_time: string | null
+          description: string | null
+          features: Json | null
+          id: string
+          is_active: boolean
+          name: string
+          price: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          delivery_time?: string | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean
+          name: string
+          price: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          delivery_time?: string | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_content: {
+        Row: {
+          content: Json | null
+          created_at: string
+          id: string
+          section_key: string
+          updated_at: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          id?: string
+          section_key: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          id?: string
+          section_key?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      link_category: "header" | "footer" | "external"
+      query_status: "new" | "read" | "resolved"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +397,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      link_category: ["header", "footer", "external"],
+      query_status: ["new", "read", "resolved"],
+    },
   },
 } as const
