@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, FileText, DollarSign, MessageSquare,
+  LayoutDashboard, FileText, MessageSquare,
   Link2, Layout, Shield, CalendarClock
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
