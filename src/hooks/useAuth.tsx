@@ -30,10 +30,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    let initialSessionHandled = false;
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
+        setLoading(true);
         const admin = await checkAdminRole(session.user.id);
         setIsAdmin(admin);
       } else {
@@ -43,13 +46,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const admin = await checkAdminRole(session.user.id);
-        setIsAdmin(admin);
+      if (!initialSessionHandled) {
+        initialSessionHandled = true;
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          const admin = await checkAdminRole(session.user.id);
+          setIsAdmin(admin);
+        }
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();

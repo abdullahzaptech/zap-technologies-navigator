@@ -20,9 +20,12 @@ const AdminLogin = () => {
 
   // After sign-in completes, wait for isAdmin to resolve then redirect
   useEffect(() => {
-    if (signInComplete && user && isAdmin) {
+    if (!signInComplete) return;
+    if (loading) return; // still checking role
+    
+    if (user && isAdmin) {
       navigate('/admin/dashboard', { replace: true });
-    } else if (signInComplete && user && !isAdmin && !loading) {
+    } else if (user && !isAdmin) {
       setError('Your account does not have admin privileges.');
       setIsLoading(false);
       setSignInComplete(false);
