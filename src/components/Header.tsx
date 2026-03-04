@@ -10,7 +10,7 @@ const navItems = [
   { label: "Portfolio", href: "/portfolio" },
   { label: "Hire a Developer", href: "/hire" },
   { label: "Contact Us", href: "/contact" },
-  { label: "Blog", href: "/blog" },
+  { label: "Pricing", href: "/pricing" },
 ];
 
 const Header = () => {
