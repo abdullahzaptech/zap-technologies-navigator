@@ -210,9 +210,11 @@ const ServiceDetailSection = ({ service, index }: { service: ServiceDetail; inde
             ))}
           </div>
 
-          <Button variant="cta" className="group">
-            Contact Us
-            <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+          <Button variant="cta" className="group" asChild>
+            <a href={`/services/${service.title.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "and")}`}>
+              Learn More
+              <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+            </a>
           </Button>
         </motion.div>
 
