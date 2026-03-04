@@ -107,6 +107,11 @@ const Contact = () => {
         ].filter(Boolean).join('\n'),
       });
       if (error) throw error;
+
+      // Send email notification (fire-and-forget, don't block form success)
+      supabase.functions.invoke('send-contact-email', {
+        body: data,
+      }).catch((err) => console.error('Email notification failed:', err));
     },
     onSuccess: () => {
       toast({ title: "Message sent!", description: "We'll get back to you within 24 hours." });
