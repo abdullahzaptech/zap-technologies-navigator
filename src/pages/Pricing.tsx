@@ -279,8 +279,8 @@ const Pricing = () => {
                   </select>
                 </div>
               </div>
-              <Button variant="cta" type="submit" className="rounded-full px-8 w-full sm:w-auto">
-                <Send className="w-4 h-4 mr-2" /> Request a Quote
+              <Button variant="cta" type="submit" className="rounded-full px-8 w-full sm:w-auto" disabled={submitMutation.isPending}>
+                {submitMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />} {submitMutation.isPending ? 'Sending...' : 'Request a Quote'}
               </Button>
             </motion.form>
           </div>

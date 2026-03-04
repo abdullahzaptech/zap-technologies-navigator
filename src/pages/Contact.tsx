@@ -241,8 +241,8 @@ const Contact = () => {
                 <Textarea id="message" placeholder="Tell us about your project or inquiry..." rows={5} value={formData.message} onChange={(e) => handleChange("message", e.target.value)} required maxLength={2000} />
               </div>
 
-              <Button type="submit" variant="cta" size="lg" className="w-full sm:w-auto rounded-full px-10 text-base gap-2">
-                <Send className="w-4 h-4" /> Send Message
+              <Button type="submit" variant="cta" size="lg" className="w-full sm:w-auto rounded-full px-10 text-base gap-2" disabled={submitMutation.isPending}>
+                {submitMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />} {submitMutation.isPending ? 'Sending...' : 'Send Message'}
               </Button>
             </motion.form>
 
