@@ -99,8 +99,8 @@ const Pricing = () => {
   });
 
   // Split DB packages by category, fall back to static data if DB is empty
-  const webPackages: PkgDisplay[] = dbPackages.filter(p => p.category?.toLowerCase() === 'web development').length > 0
-    ? dbPackages.filter(p => p.category?.toLowerCase() === 'web development').map((p, i) => ({
+  const webPackages: PkgDisplay[] = dbPackages.filter(p => p.category?.trim().toLowerCase() === 'web development').length > 0
+    ? dbPackages.filter(p => p.category?.trim().toLowerCase() === 'web development').map((p, i) => ({
         name: p.name, price: p.price, description: p.description,
         features: Array.isArray(p.features) ? (p.features as string[]) : [],
         delivery_time: p.delivery_time, sort_order: p.sort_order || 0,
@@ -108,8 +108,8 @@ const Pricing = () => {
       }))
     : fallbackWebPackages.map((p, i) => ({ ...p, popular: i === 1 }));
 
-  const mobilePackages: PkgDisplay[] = dbPackages.filter(p => p.category?.toLowerCase() === 'mobile app development').length > 0
-    ? dbPackages.filter(p => p.category?.toLowerCase() === 'mobile app development').map((p, i) => ({
+  const mobilePackages: PkgDisplay[] = dbPackages.filter(p => p.category?.trim().toLowerCase() === 'mobile app development').length > 0
+    ? dbPackages.filter(p => p.category?.trim().toLowerCase() === 'mobile app development').map((p, i) => ({
         name: p.name, price: p.price, description: p.description,
         features: Array.isArray(p.features) ? (p.features as string[]) : [],
         delivery_time: p.delivery_time, sort_order: p.sort_order || 0,
@@ -117,8 +117,8 @@ const Pricing = () => {
       }))
     : fallbackMobilePackages.map((p, i) => ({ ...p, popular: i === 1 }));
 
-  const consultingPackages = dbPackages.filter(p => p.category?.toLowerCase() === 'it consulting').length > 0
-    ? dbPackages.filter(p => p.category?.toLowerCase() === 'it consulting').map(p => ({
+  const consultingPackages = dbPackages.filter(p => p.category?.trim().toLowerCase() === 'it consulting').length > 0
+    ? dbPackages.filter(p => p.category?.trim().toLowerCase() === 'it consulting').map(p => ({
         name: p.name, price: p.price, desc: p.description || '',
       }))
     : fallbackConsultingPackages.map(p => ({ name: p.name, price: p.price, desc: p.description || '' }));
