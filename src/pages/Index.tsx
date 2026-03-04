@@ -5,6 +5,7 @@ import ClientsTestimonialsSection from "@/components/ClientsTestimonialsSection"
 import AboutSection from "@/components/AboutSection";
 import PortfolioSection from "@/components/PortfolioSection";
 import CTASection from "@/components/CTASection";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
