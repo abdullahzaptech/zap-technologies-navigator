@@ -18,7 +18,7 @@ import ServiceDetailPage from "./pages/ServiceDetailPage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminBlog from "./pages/AdminBlog";
-import AdminPricing from "./pages/AdminPricing";
+
 import AdminQueries from "./pages/AdminQueries";
 import AdminLinks from "./pages/AdminLinks";
 import AdminContent from "./pages/AdminContent";
@@ -52,7 +52,7 @@ const App = () => (
             <Route path="/admin/zaplogin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/blog" element={<ProtectedRoute><AdminBlog /></ProtectedRoute>} />
-            <Route path="/admin/pricing" element={<ProtectedRoute><AdminPricing /></ProtectedRoute>} />
+            
             <Route path="/admin/queries" element={<ProtectedRoute><AdminQueries /></ProtectedRoute>} />
             <Route path="/admin/links" element={<ProtectedRoute><AdminLinks /></ProtectedRoute>} />
             <Route path="/admin/content" element={<ProtectedRoute><AdminContent /></ProtectedRoute>} />

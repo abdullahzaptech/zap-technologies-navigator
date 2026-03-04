@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Check, Star, ArrowRight, Send, CreditCard, Clock, DollarSign, ChevronDown, ChevronUp, Zap, Globe, Smartphone, Headphones, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
-import type { Json } from "@/integrations/supabase/types";
 
 /* ─── Fallback static data (used when DB is empty) ─── */
 const fallbackWebPackages = [
@@ -88,40 +87,9 @@ const Pricing = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [form, setForm] = useState({ name: "", email: "", service: "", scope: "", budget: "", timeline: "" });
 
-  // Fetch pricing packages from DB
-  const { data: dbPackages = [], isLoading } = useQuery({
-    queryKey: ['public-pricing-packages'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('pricing_packages').select('*').eq('is_active', true).order('sort_order');
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
-  // Split DB packages by category, fall back to static data if DB is empty
-  const webPackages: PkgDisplay[] = dbPackages.filter(p => p.category?.trim().toLowerCase() === 'web development').length > 0
-    ? dbPackages.filter(p => p.category?.trim().toLowerCase() === 'web development').map((p, i) => ({
-        name: p.name, price: p.price, description: p.description,
-        features: Array.isArray(p.features) ? (p.features as string[]) : [],
-        delivery_time: p.delivery_time, sort_order: p.sort_order || 0,
-        popular: i === 1,
-      }))
-    : fallbackWebPackages.map((p, i) => ({ ...p, popular: i === 1 }));
-
-  const mobilePackages: PkgDisplay[] = dbPackages.filter(p => p.category?.trim().toLowerCase() === 'mobile app development').length > 0
-    ? dbPackages.filter(p => p.category?.trim().toLowerCase() === 'mobile app development').map((p, i) => ({
-        name: p.name, price: p.price, description: p.description,
-        features: Array.isArray(p.features) ? (p.features as string[]) : [],
-        delivery_time: p.delivery_time, sort_order: p.sort_order || 0,
-        popular: i === 1,
-      }))
-    : fallbackMobilePackages.map((p, i) => ({ ...p, popular: i === 1 }));
-
-  const consultingPackages = dbPackages.filter(p => p.category?.trim().toLowerCase() === 'it consulting').length > 0
-    ? dbPackages.filter(p => p.category?.trim().toLowerCase() === 'it consulting').map(p => ({
-        name: p.name, price: p.price, desc: p.description || '',
-      }))
-    : fallbackConsultingPackages.map(p => ({ name: p.name, price: p.price, desc: p.description || '' }));
+  const webPackages: PkgDisplay[] = fallbackWebPackages.map((p, i) => ({ ...p, popular: i === 1 }));
+  const mobilePackages: PkgDisplay[] = fallbackMobilePackages.map((p, i) => ({ ...p, popular: i === 1 }));
+  const consultingPackages = fallbackConsultingPackages.map(p => ({ name: p.name, price: p.price, desc: p.description || '' }));
 
   const submitMutation = useMutation({
     mutationFn: async (data: typeof form) => {
@@ -185,11 +153,7 @@ const Pricing = () => {
         </div>
       </section>
 
-      {isLoading ? (
-        <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-      ) : (
-        <>
-          {/* Web Development Packages */}
+      {/* Web Development Packages */}
           <section className="py-16 md:py-20">
             <div className="container px-4">
               <div className="text-center mb-12">
@@ -237,8 +201,6 @@ const Pricing = () => {
               </div>
             </div>
           </section>
-        </>
-      )}
 
       {/* Custom Solutions Form */}
       <section className="py-16 md:py-20 bg-secondary">
