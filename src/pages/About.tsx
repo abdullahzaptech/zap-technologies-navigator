@@ -3,7 +3,8 @@ import AboutHero from "@/components/about/AboutHero";
 import AboutMission from "@/components/about/AboutMission";
 import AboutValues from "@/components/about/AboutValues";
 import AboutTeam from "@/components/about/AboutTeam";
-import WhyChooseUsSection from "@/components/WhyChooseUsSection";
+import AboutJourney from "@/components/about/AboutJourney";
+import AboutAchievements from "@/components/about/AboutAchievements";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 
@@ -15,7 +16,8 @@ const About = () => {
       <AboutMission />
       <AboutValues />
       <AboutTeam />
-      <WhyChooseUsSection />
+      <AboutJourney />
+      <AboutAchievements />
       <CTASection />
       <Footer />
     </div>
