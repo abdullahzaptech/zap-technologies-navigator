@@ -11,14 +11,32 @@ const milestones = [
 
 const AboutJourney = () => {
   return (
-    <section className="py-24 bg-secondary/40">
-      <div className="container px-4">
+    <section className="relative py-28 overflow-hidden">
+      {/* Blue gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-[hsl(230,70%,30%)]" />
+
+      {/* Floating shapes */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          animate={{ y: [0, -16, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-16 right-[8%] h-24 w-24 rounded-full border border-primary-foreground/10 bg-primary-foreground/5 backdrop-blur-sm"
+        />
+        <motion.div
+          animate={{ y: [0, 14, 0] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-20 left-[6%] h-20 w-20 rounded-2xl border border-primary-foreground/10 bg-primary-foreground/5 backdrop-blur-sm rotate-12"
+        />
+      </div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-accent/8 blur-[120px]" />
+
+      <div className="container px-4 relative z-10">
         <div className="text-center mb-16">
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-sm font-semibold tracking-widest uppercase text-primary mb-2"
+            className="text-sm font-semibold tracking-widest uppercase text-accent mb-2"
           >
             How We Got Here
           </motion.p>
@@ -27,7 +45,7 @@ const AboutJourney = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-foreground"
           >
             Our Journey
           </motion.h2>
@@ -37,7 +55,7 @@ const AboutJourney = () => {
         {/* Timeline */}
         <div className="max-w-3xl mx-auto relative">
           {/* Vertical line */}
-          <div className="absolute left-6 sm:left-1/2 top-0 bottom-0 w-0.5 bg-border sm:-translate-x-px" />
+          <div className="absolute left-6 sm:left-1/2 top-0 bottom-0 w-0.5 bg-primary-foreground/15 sm:-translate-x-px" />
 
           <div className="space-y-12">
             {milestones.map((milestone, i) => {
@@ -53,16 +71,16 @@ const AboutJourney = () => {
                 >
                   {/* Content */}
                   <div className={`flex-1 ${isLeft ? "sm:pr-12 sm:text-right" : "sm:pl-12 sm:text-left"} pl-12 sm:pl-0`}>
-                    <div className="rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20">
-                      <span className="inline-block text-sm font-bold text-primary mb-1">{milestone.year}</span>
-                      <h3 className="font-bold text-foreground mb-2">{milestone.title}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{milestone.description}</p>
+                    <div className="rounded-xl border border-primary-foreground/10 bg-primary-foreground/5 p-5 backdrop-blur-sm transition-all duration-300 hover:bg-primary-foreground/10 hover:border-primary-foreground/20">
+                      <span className="inline-block text-sm font-bold text-accent mb-1">{milestone.year}</span>
+                      <h3 className="font-bold text-primary-foreground mb-2">{milestone.title}</h3>
+                      <p className="text-sm text-primary-foreground/60 leading-relaxed">{milestone.description}</p>
                     </div>
                   </div>
 
                   {/* Dot */}
                   <div className="absolute left-6 sm:left-1/2 -translate-x-1/2 flex h-4 w-4 items-center justify-center">
-                    <div className="h-4 w-4 rounded-full border-[3px] border-primary bg-background" />
+                    <div className="h-4 w-4 rounded-full border-[3px] border-accent bg-primary" />
                   </div>
 
                   {/* Spacer for opposite side */}
