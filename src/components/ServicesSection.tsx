@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Globe, Smartphone, Palette, Wrench, PenTool, Megaphone, Search, BrainCircuit, Bot } from "lucide-react";
+import { Globe, Smartphone, Palette, Wrench, PenTool, Megaphone, Search, BrainCircuit, Bot, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 const services = [
   {
@@ -53,15 +54,47 @@ const ServicesSection = () => {
   return (
     <section className="py-24 bg-background">
       <div className="container px-4">
-        {/* Section Header */}
-        <div className="text-center mb-16">
-          <p className="text-sm font-semibold tracking-widest uppercase text-primary mb-2">
-            What We Do
-          </p>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
-            Our Expertise
-          </h2>
-          <div className="mt-4 mx-auto w-16 h-1 rounded-full bg-accent" />
+        {/* Page Header */}
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+            className="text-sm font-semibold tracking-widest uppercase text-primary mb-2"
+          >
+            What We Offer
+          </motion.p>
+          <motion.h2
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
+          >
+            Our Services
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="text-muted-foreground text-lg leading-relaxed mb-6"
+          >
+            At Zap Technologies, we specialize in delivering cutting-edge software development, cloud-based solutions, and IT consulting services to help businesses accelerate growth and innovation.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+          >
+            <Button variant="cta" size="lg" className="rounded-full px-8 text-base group">
+              Get a Quote
+              <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </motion.div>
+          <div className="mt-8 mx-auto w-16 h-1 rounded-full bg-accent" />
         </div>
 
         {/* Services Grid */}
