@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Globe, Smartphone, Palette, Wrench, PenTool, Megaphone, Search, BrainCircuit, Bot, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -14,56 +16,51 @@ const services = [
   { icon: BrainCircuit, title: "AI Based SaaS Products", slug: "ai-based-saas", description: "Scalable AI-driven software solutions for modern businesses." },
 ];
 
+const defaults = {
+  title: "Our Services",
+  description: "At Zap Technologies, we specialize in delivering cutting-edge software development, cloud-based solutions, and IT consulting services to help businesses accelerate growth and innovation.",
+};
+
 const ServicesSection = () => {
+  const { data: content } = useQuery({
+    queryKey: ['public-site-content', 'services'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('site_content').select('content').eq('section_key', 'services').maybeSingle();
+      if (error) throw error;
+      return data?.content as Record<string, string> | null;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const title = content?.title || defaults.title;
+  const description = content?.description || defaults.description;
+
   return (
     <section className="py-24 bg-background">
       <div className="container px-4">
-        {/* Page Header */}
         <div className="text-center mb-16 max-w-3xl mx-auto">
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="text-sm font-semibold tracking-widest uppercase text-primary mb-2"
-          >
+          <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4 }} className="text-sm font-semibold tracking-widest uppercase text-primary mb-2">
             What We Offer
           </motion.p>
-          <motion.h2
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4"
-          >
-            Our Services
+          <motion.h2 initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.1 }} className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
+            {title}
           </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="text-muted-foreground text-lg leading-relaxed mb-6"
-          >
-            At Zap Technologies, we specialize in delivering cutting-edge software development, cloud-based solutions, and IT consulting services to help businesses accelerate growth and innovation.
+          <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.2 }} className="text-muted-foreground text-lg leading-relaxed mb-6">
+            {description}
           </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-          >
-            <Button variant="cta" size="lg" className="rounded-full px-8 text-base group">
-              Get a Quote
-              <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.3 }}>
+            <Button variant="cta" size="lg" className="rounded-full px-8 text-base group" asChild>
+              <a href="/contact">
+                Get a Quote
+                <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+              </a>
             </Button>
           </motion.div>
           <div className="mt-8 mx-auto w-16 h-1 rounded-full bg-accent" />
         </div>
 
-        {/* Services Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {services.map((service, i) => (
+          {services.map((service) => (
             <a
               key={service.title}
               href={`/services/${service.slug}`}
@@ -72,26 +69,20 @@ const ServicesSection = () => {
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-accent group-hover:text-accent-foreground">
                 <service.icon className="h-8 w-8" />
               </div>
-              <h3 className="text-lg font-bold text-card-foreground mb-3">
-                {service.title}
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                {service.description}
-              </p>
+              <h3 className="text-lg font-bold text-card-foreground mb-3">{service.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">{service.description}</p>
               <div className="opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                 <span className="text-primary font-semibold text-sm inline-flex items-center gap-1">
-                  Learn More
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  Learn More <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>
               </div>
             </a>
           ))}
         </div>
 
-        {/* CTA */}
         <div className="text-center mt-14">
-          <Button size="lg" className="rounded-full px-8 text-base">
-            Explore All Services
+          <Button size="lg" className="rounded-full px-8 text-base" asChild>
+            <a href="/services">Explore All Services</a>
           </Button>
         </div>
       </div>
