@@ -101,6 +101,83 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_settings: {
+        Row: {
+          id: string
+          slot_duration_minutes: number
+          updated_at: string
+          work_end_time: string
+          work_start_time: string
+          working_days: number[]
+        }
+        Insert: {
+          id?: string
+          slot_duration_minutes?: number
+          updated_at?: string
+          work_end_time?: string
+          work_start_time?: string
+          working_days?: number[]
+        }
+        Update: {
+          id?: string
+          slot_duration_minutes?: number
+          updated_at?: string
+          work_end_time?: string
+          work_start_time?: string
+          working_days?: number[]
+        }
+        Relationships: []
+      }
+      bookings: {
+        Row: {
+          admin_notes: string | null
+          booking_date: string
+          booking_time: string
+          client_email: string
+          client_name: string
+          client_phone: string | null
+          created_at: string
+          id: string
+          meeting_type_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          booking_date: string
+          booking_time: string
+          client_email: string
+          client_name: string
+          client_phone?: string | null
+          created_at?: string
+          id?: string
+          meeting_type_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          booking_date?: string
+          booking_time?: string
+          client_email?: string
+          client_name?: string
+          client_phone?: string | null
+          created_at?: string
+          id?: string
+          meeting_type_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_meeting_type_id_fkey"
+            columns: ["meeting_type_id"]
+            isOneToOne: false
+            referencedRelation: "meeting_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       form_queries: {
         Row: {
           created_at: string
@@ -164,6 +241,36 @@ export type Database = {
           target?: string | null
           updated_at?: string
           url?: string
+        }
+        Relationships: []
+      }
+      meeting_types: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number | null
         }
         Relationships: []
       }
