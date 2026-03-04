@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, FileText, DollarSign, MessageSquare,
-  Link2, Layout, Shield
+  Link2, Layout, Shield, CalendarClock
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLocation } from 'react-router-dom';
@@ -18,6 +18,7 @@ const menuItems = [
   { title: 'Queries', url: '/admin/queries', icon: MessageSquare },
   { title: 'Links', url: '/admin/links', icon: Link2 },
   { title: 'Content', url: '/admin/content', icon: Layout },
+  { title: 'Bookings', url: '/admin/bookings', icon: CalendarClock },
   { title: 'Security', url: '/admin/security', icon: Shield },
 ];
 

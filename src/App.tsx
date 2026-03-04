@@ -23,7 +23,9 @@ import AdminQueries from "./pages/AdminQueries";
 import AdminLinks from "./pages/AdminLinks";
 import AdminContent from "./pages/AdminContent";
 import AdminSecurity from "./pages/AdminSecurity";
+import AdminBookings from "./pages/AdminBookings";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
+import BookingWidget from "./components/BookingWidget";
 
 const queryClient = new QueryClient();
 
@@ -55,10 +57,12 @@ const App = () => (
             <Route path="/admin/links" element={<ProtectedRoute><AdminLinks /></ProtectedRoute>} />
             <Route path="/admin/content" element={<ProtectedRoute><AdminContent /></ProtectedRoute>} />
             <Route path="/admin/security" element={<ProtectedRoute><AdminSecurity /></ProtectedRoute>} />
+            <Route path="/admin/bookings" element={<ProtectedRoute><AdminBookings /></ProtectedRoute>} />
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <BookingWidget />
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
