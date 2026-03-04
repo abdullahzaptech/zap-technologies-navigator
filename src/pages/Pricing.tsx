@@ -11,60 +11,22 @@ import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import type { Json } from "@/integrations/supabase/types";
 
-const webPackages = [
-  {
-    name: "Basic",
-    subtitle: "Perfect for small businesses and startups",
-    price: "$2,500",
-    popular: false,
-    delivery: "2–4 weeks",
-    features: ["Simple 5-page website", "Responsive design", "Basic SEO setup", "Hosting setup", "Contact form", "1 round of revisions"],
-  },
-  {
-    name: "Standard",
-    subtitle: "For businesses looking to expand online",
-    price: "$5,000 – $8,000",
-    popular: true,
-    delivery: "4–6 weeks",
-    features: ["Custom website design", "Up to 10 pages", "Advanced SEO", "CMS integration", "E-commerce setup", "Analytics dashboard", "3 rounds of revisions"],
-  },
-  {
-    name: "Premium",
-    subtitle: "Complex functionality and features",
-    price: "$10,000 – $20,000",
-    popular: false,
-    delivery: "6–8 weeks",
-    features: ["Full custom development", "Up to 20+ pages", "Advanced integrations", "Full e-commerce", "Performance optimization", "Ongoing support (3 months)", "Unlimited revisions"],
-  },
+/* ─── Fallback static data (used when DB is empty) ─── */
+const fallbackWebPackages = [
+  { name: "Basic", description: "Perfect for small businesses and startups", price: "$2,500", delivery_time: "2–4 weeks", features: ["Simple 5-page website", "Responsive design", "Basic SEO setup", "Hosting setup", "Contact form", "1 round of revisions"], sort_order: 0 },
+  { name: "Standard", description: "For businesses looking to expand online", price: "$5,000 – $8,000", delivery_time: "4–6 weeks", features: ["Custom website design", "Up to 10 pages", "Advanced SEO", "CMS integration", "E-commerce setup", "Analytics dashboard", "3 rounds of revisions"], sort_order: 1 },
+  { name: "Premium", description: "Complex functionality and features", price: "$10,000 – $20,000", delivery_time: "6–8 weeks", features: ["Full custom development", "Up to 20+ pages", "Advanced integrations", "Full e-commerce", "Performance optimization", "Ongoing support (3 months)", "Unlimited revisions"], sort_order: 2 },
 ];
 
-const mobilePackages = [
-  {
-    name: "Basic App",
-    subtitle: "Ideal for small mobile applications",
-    price: "$5,000",
-    delivery: "4–6 weeks",
-    features: ["One platform (iOS or Android)", "Basic user interface", "Core functionality", "App store submission"],
-  },
-  {
-    name: "Custom App",
-    subtitle: "Custom features for growing businesses",
-    price: "$10,000 – $20,000",
-    delivery: "6–8 weeks",
-    features: ["Two platforms (iOS & Android)", "Custom UI/UX design", "API integrations", "User authentication", "Push notifications"],
-  },
-  {
-    name: "Enterprise App",
-    subtitle: "Large-scale apps with advanced integrations",
-    price: "$25,000 – $50,000+",
-    delivery: "8+ weeks",
-    features: ["Multi-platform (iOS & Android)", "Enterprise integrations", "User management system", "Payment gateway", "Admin dashboard", "Priority support"],
-  },
+const fallbackMobilePackages = [
+  { name: "Basic App", description: "Ideal for small mobile applications", price: "$5,000", delivery_time: "4–6 weeks", features: ["One platform (iOS or Android)", "Basic user interface", "Core functionality", "App store submission"], sort_order: 0 },
+  { name: "Custom App", description: "Custom features for growing businesses", price: "$10,000 – $20,000", delivery_time: "6–8 weeks", features: ["Two platforms (iOS & Android)", "Custom UI/UX design", "API integrations", "User authentication", "Push notifications"], sort_order: 1 },
+  { name: "Enterprise App", description: "Large-scale apps with advanced integrations", price: "$25,000 – $50,000+", delivery_time: "8+ weeks", features: ["Multi-platform (iOS & Android)", "Enterprise integrations", "User management system", "Payment gateway", "Admin dashboard", "Priority support"], sort_order: 2 },
 ];
 
-const consultingPackages = [
-  { name: "Hourly Consulting", price: "$150/hour", desc: "For short-term advisory, code reviews, and strategy sessions." },
-  { name: "Project-Based", price: "$3,000+ per project", desc: "Business IT audits, software recommendations, strategy planning, and technology roadmaps." },
+const fallbackConsultingPackages = [
+  { name: "Hourly Consulting", price: "$150/hour", description: "For short-term advisory, code reviews, and strategy sessions.", features: [], delivery_time: null, sort_order: 0 },
+  { name: "Project-Based", price: "$3,000+ per project", description: "Business IT audits, software recommendations, strategy planning, and technology roadmaps.", features: [], delivery_time: null, sort_order: 1 },
 ];
 
 const paymentTerms = [
@@ -81,7 +43,13 @@ const faqs = [
   { q: "Is there a refund policy?", a: "We offer refunds for work not yet started. Once development begins, refunds are prorated based on completed milestones." },
 ];
 
-const PricingCard = ({ pkg, index }: { pkg: typeof webPackages[0]; index: number }) => (
+type PkgDisplay = {
+  name: string; price: string; description: string | null;
+  features: string[]; delivery_time: string | null; sort_order: number;
+  popular?: boolean;
+};
+
+const PricingCard = ({ pkg, index }: { pkg: PkgDisplay; index: number }) => (
   <motion.div
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -99,9 +67,9 @@ const PricingCard = ({ pkg, index }: { pkg: typeof webPackages[0]; index: number
       </Badge>
     )}
     <h3 className="text-xl font-bold text-foreground">{pkg.name}</h3>
-    <p className="text-sm text-muted-foreground mt-1 mb-4">{pkg.subtitle}</p>
+    <p className="text-sm text-muted-foreground mt-1 mb-4">{pkg.description}</p>
     <p className="text-3xl font-bold text-primary mb-1">{pkg.price}</p>
-    <p className="text-xs text-muted-foreground mb-6 flex items-center gap-1"><Clock className="w-3 h-3" /> {pkg.delivery}</p>
+    {pkg.delivery_time && <p className="text-xs text-muted-foreground mb-6 flex items-center gap-1"><Clock className="w-3 h-3" /> {pkg.delivery_time}</p>}
     <ul className="space-y-3 mb-8 flex-1">
       {pkg.features.map((f) => (
         <li key={f} className="flex items-start gap-2 text-sm text-foreground/80">
@@ -120,6 +88,41 @@ const Pricing = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [form, setForm] = useState({ name: "", email: "", service: "", scope: "", budget: "", timeline: "" });
 
+  // Fetch pricing packages from DB
+  const { data: dbPackages = [], isLoading } = useQuery({
+    queryKey: ['public-pricing-packages'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('pricing_packages').select('*').eq('is_active', true).order('sort_order');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Split DB packages by category, fall back to static data if DB is empty
+  const webPackages: PkgDisplay[] = dbPackages.filter(p => p.category?.toLowerCase() === 'web development').length > 0
+    ? dbPackages.filter(p => p.category?.toLowerCase() === 'web development').map((p, i) => ({
+        name: p.name, price: p.price, description: p.description,
+        features: Array.isArray(p.features) ? (p.features as string[]) : [],
+        delivery_time: p.delivery_time, sort_order: p.sort_order || 0,
+        popular: i === 1,
+      }))
+    : fallbackWebPackages.map((p, i) => ({ ...p, popular: i === 1 }));
+
+  const mobilePackages: PkgDisplay[] = dbPackages.filter(p => p.category?.toLowerCase() === 'mobile app development').length > 0
+    ? dbPackages.filter(p => p.category?.toLowerCase() === 'mobile app development').map((p, i) => ({
+        name: p.name, price: p.price, description: p.description,
+        features: Array.isArray(p.features) ? (p.features as string[]) : [],
+        delivery_time: p.delivery_time, sort_order: p.sort_order || 0,
+        popular: i === 1,
+      }))
+    : fallbackMobilePackages.map((p, i) => ({ ...p, popular: i === 1 }));
+
+  const consultingPackages = dbPackages.filter(p => p.category?.toLowerCase() === 'it consulting').length > 0
+    ? dbPackages.filter(p => p.category?.toLowerCase() === 'it consulting').map(p => ({
+        name: p.name, price: p.price, desc: p.description || '',
+      }))
+    : fallbackConsultingPackages.map(p => ({ name: p.name, price: p.price, desc: p.description || '' }));
+
   const submitMutation = useMutation({
     mutationFn: async (data: typeof form) => {
       const { error } = await supabase.from('form_queries').insert({
@@ -133,6 +136,17 @@ const Pricing = () => {
         ].filter(Boolean).join('\n'),
       });
       if (error) throw error;
+
+      // Send email notification
+      try {
+        await supabase.functions.invoke('send-contact-email', {
+          body: {
+            name: data.name, email: data.email,
+            subject: `Quote Request: ${data.service || 'General'}`,
+            message: [data.scope ? `Scope: ${data.scope}` : '', data.budget ? `Budget: ${data.budget}` : '', data.timeline ? `Timeline: ${data.timeline}` : ''].filter(Boolean).join('\n'),
+          },
+        });
+      } catch {}
     },
     onSuccess: () => {
       toast({ title: "Quote request received!", description: "We'll review your requirements and get back to you within 24 hours." });
@@ -165,60 +179,66 @@ const Pricing = () => {
             <Badge className="bg-background/20 text-primary-foreground border-0 mb-4">Pricing</Badge>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-foreground mb-4">Transparent Pricing for Your Project</h1>
             <p className="text-primary-foreground/80 max-w-2xl mx-auto text-base sm:text-lg">
-              At Zap Technologies, we believe in transparency. Our pricing models are designed to meet your business needs while delivering exceptional results. Explore our options or request a tailored quote.
+              At Zap Technologies, we believe in transparency. Our pricing models are designed to meet your business needs while delivering exceptional results.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Web Development Packages */}
-      <section className="py-16 md:py-20">
-        <div className="container px-4">
-          <div className="text-center mb-12">
-            <div className="flex justify-center mb-3"><Globe className="w-8 h-8 text-primary" /></div>
-            <h2 className="text-3xl font-bold text-foreground mb-2">Web Development</h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">Choose the package that fits your web development needs</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {webPackages.map((pkg, i) => <PricingCard key={pkg.name} pkg={pkg} index={i} />)}
-          </div>
-        </div>
-      </section>
+      {isLoading ? (
+        <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+      ) : (
+        <>
+          {/* Web Development Packages */}
+          <section className="py-16 md:py-20">
+            <div className="container px-4">
+              <div className="text-center mb-12">
+                <div className="flex justify-center mb-3"><Globe className="w-8 h-8 text-primary" /></div>
+                <h2 className="text-3xl font-bold text-foreground mb-2">Web Development</h2>
+                <p className="text-muted-foreground max-w-lg mx-auto">Choose the package that fits your web development needs</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                {webPackages.map((pkg, i) => <PricingCard key={pkg.name} pkg={pkg} index={i} />)}
+              </div>
+            </div>
+          </section>
 
-      {/* Mobile App Packages */}
-      <section className="py-16 md:py-20 bg-secondary">
-        <div className="container px-4">
-          <div className="text-center mb-12">
-            <div className="flex justify-center mb-3"><Smartphone className="w-8 h-8 text-primary" /></div>
-            <h2 className="text-3xl font-bold text-foreground mb-2">Mobile App Development</h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">Native and cross-platform mobile solutions</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {mobilePackages.map((pkg, i) => <PricingCard key={pkg.name} pkg={{ ...pkg, popular: i === 1 }} index={i} />)}
-          </div>
-        </div>
-      </section>
+          {/* Mobile App Packages */}
+          <section className="py-16 md:py-20 bg-secondary">
+            <div className="container px-4">
+              <div className="text-center mb-12">
+                <div className="flex justify-center mb-3"><Smartphone className="w-8 h-8 text-primary" /></div>
+                <h2 className="text-3xl font-bold text-foreground mb-2">Mobile App Development</h2>
+                <p className="text-muted-foreground max-w-lg mx-auto">Native and cross-platform mobile solutions</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                {mobilePackages.map((pkg, i) => <PricingCard key={pkg.name} pkg={pkg} index={i} />)}
+              </div>
+            </div>
+          </section>
 
-      {/* IT Consulting */}
-      <section className="py-16 md:py-20">
-        <div className="container px-4">
-          <div className="text-center mb-12">
-            <div className="flex justify-center mb-3"><Headphones className="w-8 h-8 text-primary" /></div>
-            <h2 className="text-3xl font-bold text-foreground mb-2">IT Consulting</h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">Expert guidance for your technology decisions</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {consultingPackages.map((pkg, i) => (
-              <motion.div key={pkg.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="rounded-2xl border border-border bg-card p-6 sm:p-8">
-                <h3 className="text-xl font-bold text-foreground mb-1">{pkg.name}</h3>
-                <p className="text-2xl font-bold text-primary mb-3">{pkg.price}</p>
-                <p className="text-sm text-muted-foreground mb-6">{pkg.desc}</p>
-                <Button variant="outline" className="rounded-full w-full" asChild><a href="/contact">Inquire Now</a></Button>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+          {/* IT Consulting */}
+          <section className="py-16 md:py-20">
+            <div className="container px-4">
+              <div className="text-center mb-12">
+                <div className="flex justify-center mb-3"><Headphones className="w-8 h-8 text-primary" /></div>
+                <h2 className="text-3xl font-bold text-foreground mb-2">IT Consulting</h2>
+                <p className="text-muted-foreground max-w-lg mx-auto">Expert guidance for your technology decisions</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                {consultingPackages.map((pkg, i) => (
+                  <motion.div key={pkg.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+                    <h3 className="text-xl font-bold text-foreground mb-1">{pkg.name}</h3>
+                    <p className="text-2xl font-bold text-primary mb-3">{pkg.price}</p>
+                    <p className="text-sm text-muted-foreground mb-6">{pkg.desc}</p>
+                    <Button variant="outline" className="rounded-full w-full" asChild><a href="/contact">Inquire Now</a></Button>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       {/* Custom Solutions Form */}
       <section className="py-16 md:py-20 bg-secondary">
@@ -327,17 +347,11 @@ const Pricing = () => {
       <section className="py-20 bg-gradient-to-br from-primary to-primary/80">
         <div className="container px-4 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h2 className="text-3xl sm:text-4xl font-bold text-primary-foreground mb-4">Ready to Get Started?</h2>
-            <p className="text-primary-foreground/80 max-w-xl mx-auto mb-8">
-              Still unsure about pricing? Let's discuss your project in detail and find the best solution for your budget.
-            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-primary-foreground mb-4">Ready to Discuss Your Project?</h2>
+            <p className="text-primary-foreground/80 max-w-xl mx-auto mb-8">Get in touch and let's create something extraordinary together.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button variant="cta" size="lg" className="rounded-full px-8" asChild>
-                <a href="/contact">Request a Quote <ArrowRight className="w-4 h-4 ml-2" /></a>
-              </Button>
-              <Button variant="outline" size="lg" className="rounded-full px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10" asChild>
-                <a href="/contact">Contact Us for Details</a>
-              </Button>
+              <Button variant="cta" size="lg" className="rounded-full px-8" asChild><a href="/contact">Contact Us <ArrowRight className="w-4 h-4 ml-2" /></a></Button>
+              <Button size="lg" className="rounded-full px-8 bg-primary-foreground text-primary font-bold hover:bg-primary-foreground/90" asChild><a href="/hire">Hire a Developer</a></Button>
             </div>
           </motion.div>
         </div>
