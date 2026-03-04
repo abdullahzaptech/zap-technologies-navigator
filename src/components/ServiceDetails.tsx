@@ -222,7 +222,7 @@ const ServiceDetailSection = ({ service, index }: { service: ServiceDetail; inde
           </div>
 
           <Button variant="cta" className="group" asChild>
-            <a href={`/services/${servicePages.find(sp => sp.title === service.title)?.slug || service.title.toLowerCase().replace(/[\s/]+/g, "-")}`}>
+            <a href={`/services/${service.slug}`}>
               Learn More
               <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
             </a>
