@@ -15,8 +15,8 @@ const fallbackQuickLinks = [
 
 const legalLinks = [
   { label: "Privacy Policy", href: "/privacy-policy" },
-  { label: "Terms & Conditions", href: "#" },
-  { label: "Cookie Policy", href: "#" },
+  { label: "Terms & Conditions", href: "/terms-conditions" },
+  { label: "Cookie Policy", href: "/cookie-policy" },
 ];
 
 const socialLinks = [
@@ -108,7 +108,7 @@ const Footer = () => {
             <h4 className="text-background font-semibold mb-4">Get in Touch</h4>
             <ul className="space-y-3 mb-6">
               <li className="flex items-center gap-3 text-sm text-background/50">
-                <Mail className="h-4 w-4 text-accent shrink-0" /> hello@zaptechnologies.com
+                <Mail className="h-4 w-4 text-accent shrink-0" /> zaptechnologies.online@gmail.com
               </li>
               <li className="flex items-center gap-3 text-sm text-background/50">
                 <Phone className="h-4 w-4 text-accent shrink-0" /> +92 3014174921
@@ -120,7 +120,7 @@ const Footer = () => {
                 </a>
               </li>
               <li className="flex items-start gap-3 text-sm text-background/50">
-                <MapPin className="h-4 w-4 text-accent shrink-0 mt-0.5" /> 123 Innovation Drive, San Francisco, CA
+                <MapPin className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Multan, Pakistan
               </li>
             </ul>
             <div className="flex gap-3">

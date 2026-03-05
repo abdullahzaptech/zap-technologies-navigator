@@ -13,6 +13,8 @@ import HireDeveloper from "./pages/HireDeveloper";
 import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
+import CookiePolicy from "./pages/CookiePolicy";
 import Pricing from "./pages/Pricing";
 import ServiceDetailPage from "./pages/ServiceDetailPage";
 import AdminLogin from "./pages/AdminLogin";
@@ -46,6 +48,8 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-conditions" element={<TermsConditions />} />
+            <Route path="/cookie-policy" element={<CookiePolicy />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/services/:slug" element={<ServiceDetailPage />} />
 
