@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Code2, Smartphone, Layout, Server, Palette, Users, Target, Trophy,
   Clock, Zap, ChevronRight, Star, Quote, CheckCircle2, Send,
