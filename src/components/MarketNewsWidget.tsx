@@ -270,14 +270,22 @@ const MarketNewsWidget = () => {
 
               {/* Forex Tab */}
               <TabsContent value="forex" className="mt-0">
-                <ScrollArea className="h-[320px]">
-                  <div className="p-3 space-y-2">
+                <div className="p-3 pb-0">
+                  <Input
+                    placeholder="Search pair (USD, EUR, PKR...)"
+                    value={forexSearch}
+                    onChange={(e) => setForexSearch(e.target.value)}
+                    className="h-8 text-xs bg-muted/50 border-border"
+                  />
+                </div>
+                <ScrollArea className="h-[290px]">
+                  <div className="p-3 pt-2 space-y-2">
                     {isLoading ? (
                       Array.from({ length: 6 }).map((_, i) => (
                         <div key={i} className="h-16 rounded-xl bg-muted animate-pulse" />
                       ))
-                    ) : data?.forex?.length ? (
-                      data.forex.map((fx, i) => (
+                    ) : filteredForex.length ? (
+                      filteredForex.map((fx, i) => (
                         <motion.div
                           key={fx.pair}
                           initial={{ opacity: 0, x: -10 }}
@@ -295,9 +303,11 @@ const MarketNewsWidget = () => {
                         </motion.div>
                       ))
                     ) : (
-                      <p className="text-center text-sm text-muted-foreground py-8">No forex data available</p>
+                      <p className="text-center text-sm text-muted-foreground py-8">
+                        {forexSearch ? "No matching pairs" : "No forex data available"}
+                      </p>
                     )}
-                    <div className="pt-2 px-1">
+                    <div className="pt-1 px-1">
                       <p className="text-[10px] text-muted-foreground">Rates from Frankfurter API (ECB data)</p>
                     </div>
                   </div>
