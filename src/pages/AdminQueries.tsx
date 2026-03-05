@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Search, MessageSquare, Loader2, Eye, Send, Mail } from 'lucide-react';
+import { Search, MessageSquare, Loader2, Eye, Send, Mail, Paperclip, ExternalLink } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 type FormQuery = {
   id: string; name: string; email: string; subject: string | null;
   message: string | null; status: 'new' | 'read' | 'resolved'; created_at: string;
+  project_link?: string | null; attachment_url?: string | null;
 };
 
 const statusColors = { new: 'destructive', read: 'secondary', resolved: 'default' } as const;
@@ -240,6 +241,20 @@ const AdminQueries = () => {
                   <div className="text-sm"><span className="text-muted-foreground">Subject:</span> <span className="font-medium">{selectedQuery.subject}</span></div>
                 )}
                 <div className="bg-muted/50 rounded-lg p-4 text-sm whitespace-pre-wrap">{selectedQuery.message || 'No message'}</div>
+                {selectedQuery.project_link && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <ExternalLink className="w-4 h-4 text-primary shrink-0" />
+                    <span className="text-muted-foreground">Project Link:</span>
+                    <a href={selectedQuery.project_link} target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline truncate">{selectedQuery.project_link}</a>
+                  </div>
+                )}
+                {selectedQuery.attachment_url && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Paperclip className="w-4 h-4 text-primary shrink-0" />
+                    <span className="text-muted-foreground">Attachment:</span>
+                    <a href={selectedQuery.attachment_url} target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline">View File</a>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <Select value={selectedQuery.status} onValueChange={(v) => {
                     updateStatusMutation.mutate({ id: selectedQuery.id, status: v as 'new' | 'read' | 'resolved' });
