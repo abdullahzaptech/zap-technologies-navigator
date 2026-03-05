@@ -41,9 +41,9 @@ const ServiceDetailPage = () => {
                 <Button variant="cta" size="lg" className="rounded-full px-8" asChild>
                   <a href="/contact">Get a Free Quote <ArrowRight className="w-4 h-4 ml-2" /></a>
                 </Button>
-                <Button variant="outline" size="lg" className="rounded-full px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10" asChild>
-                  <a href="/pricing">View Pricing</a>
-                </Button>
+                <Button variant="outline" size="lg" className="rounded-full px-8 bg-primary-foreground text-nav font-semibold border-none hover:bg-primary-foreground/90" asChild>
+                   <a href="/pricing">View Pricing</a>
+                 </Button>
               </div>
             </motion.div>
             <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="hidden lg:block">
