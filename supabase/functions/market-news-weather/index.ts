@@ -5,6 +5,31 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
+async function fetchYahooSymbol(symbol: string, name: string) {
+  try {
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`;
+    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (!res.ok) { await res.text(); throw new Error(`HTTP ${res.status}`); }
+    const data = await res.json();
+    const meta = data.chart?.result?.[0]?.meta;
+    if (!meta) throw new Error('No meta');
+    const price = meta.regularMarketPrice ?? 0;
+    const prevClose = meta.chartPreviousClose ?? meta.previousClose ?? price;
+    const change = price - prevClose;
+    const changePercent = prevClose ? (change / prevClose) * 100 : 0;
+    return {
+      symbol: name,
+      price: price.toFixed(2),
+      change: change.toFixed(2),
+      changePercent: changePercent.toFixed(2),
+      currency: meta.currency ?? 'USD',
+    };
+  } catch (e) {
+    console.error(`Fetch error for ${name}:`, e);
+    return { symbol: name, price: '0', change: '0', changePercent: '0', currency: 'USD', error: true };
+  }
+}
+
 async function fetchStockData() {
   const symbols = [
     { symbol: '^GSPC', name: 'S&P 500' },
@@ -13,52 +38,99 @@ async function fetchStockData() {
     { symbol: '^FTSE', name: 'FTSE 100' },
     { symbol: '^N225', name: 'NIKKEI 225' },
   ];
-
-  const results = await Promise.allSettled(
-    symbols.map(async ({ symbol, name }) => {
-      try {
-        const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`;
-        const res = await fetch(url, {
-          headers: { 'User-Agent': 'Mozilla/5.0' },
-        });
-        if (!res.ok) {
-          await res.text();
-          throw new Error(`HTTP ${res.status}`);
-        }
-        const data = await res.json();
-        const meta = data.chart?.result?.[0]?.meta;
-        if (!meta) throw new Error('No meta');
-        const price = meta.regularMarketPrice ?? 0;
-        const prevClose = meta.chartPreviousClose ?? meta.previousClose ?? price;
-        const change = price - prevClose;
-        const changePercent = prevClose ? (change / prevClose) * 100 : 0;
-        return {
-          symbol: name,
-          price: price.toFixed(2),
-          change: change.toFixed(2),
-          changePercent: changePercent.toFixed(2),
-          currency: meta.currency ?? 'USD',
-        };
-      } catch (e) {
-        console.error(`Stock fetch error for ${name}:`, e);
-        return { symbol: name, price: '0', change: '0', changePercent: '0', currency: 'USD', error: true };
-      }
-    })
-  );
-
+  const results = await Promise.allSettled(symbols.map(s => fetchYahooSymbol(s.symbol, s.name)));
   return results.map(r => r.status === 'fulfilled' ? r.value : null).filter(Boolean);
+}
+
+async function fetchCryptoData() {
+  try {
+    const res = await fetch(
+      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true',
+      { headers: { 'User-Agent': 'Mozilla/5.0' } }
+    );
+    if (!res.ok) { await res.text(); return []; }
+    const data = await res.json();
+    
+    const map: Record<string, { name: string; icon: string }> = {
+      bitcoin: { name: 'Bitcoin', icon: '₿' },
+      ethereum: { name: 'Ethereum', icon: 'Ξ' },
+      solana: { name: 'Solana', icon: 'SOL' },
+    };
+
+    return Object.entries(data).map(([key, val]: [string, any]) => {
+      const price = val.usd ?? 0;
+      const change24h = val.usd_24h_change ?? 0;
+      return {
+        symbol: map[key]?.name ?? key,
+        ticker: map[key]?.icon ?? key.toUpperCase(),
+        price: price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        changePercent: change24h.toFixed(2),
+        currency: 'USD',
+      };
+    });
+  } catch (e) {
+    console.error('Crypto fetch error:', e);
+    return [];
+  }
+}
+
+async function fetchForexData() {
+  // Using exchangerate.host (free, no key required) as primary
+  // Fallback: frankfurter.app (free, no key)
+  const pairs = [
+    { from: 'USD', to: 'EUR' },
+    { from: 'USD', to: 'GBP' },
+    { from: 'USD', to: 'JPY' },
+    { from: 'USD', to: 'CAD' },
+    { from: 'USD', to: 'AUD' },
+    { from: 'EUR', to: 'GBP' },
+    { from: 'USD', to: 'PKR' },
+    { from: 'USD', to: 'INR' },
+  ];
+
+  try {
+    // Frankfurter API - completely free, no key
+    const res = await fetch('https://api.frankfurter.app/latest?from=USD&to=EUR,GBP,JPY,CAD,AUD,PKR,INR');
+    if (!res.ok) { await res.text(); return []; }
+    const data = await res.json();
+    
+    const rates = data.rates || {};
+    const result = [];
+
+    for (const { from, to } of pairs) {
+      if (from === 'USD' && rates[to] !== undefined) {
+        result.push({
+          pair: `${from}/${to}`,
+          rate: rates[to].toFixed(to === 'JPY' || to === 'PKR' || to === 'INR' ? 2 : 4),
+          base: from,
+          quote: to,
+        });
+      } else if (from === 'EUR' && to === 'GBP' && rates['EUR'] && rates['GBP']) {
+        // Cross rate
+        const eurUsd = 1 / rates['EUR'];
+        const gbpUsd = 1 / rates['GBP'];
+        const eurGbp = gbpUsd / eurUsd;
+        result.push({
+          pair: 'EUR/GBP',
+          rate: eurGbp.toFixed(4),
+          base: 'EUR',
+          quote: 'GBP',
+        });
+      }
+    }
+
+    return result;
+  } catch (e) {
+    console.error('Forex fetch error:', e);
+    return [];
+  }
 }
 
 async function fetchNewsData() {
   try {
     const rssUrl = 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en';
-    const res = await fetch(rssUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0' },
-    });
-    if (!res.ok) {
-      await res.text();
-      return [];
-    }
+    const res = await fetch(rssUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (!res.ok) { await res.text(); return []; }
     const xml = await res.text();
 
     const items: Array<{ title: string; link: string; source: string; pubDate: string }> = [];
@@ -68,9 +140,9 @@ async function fetchNewsData() {
 
     while ((match = itemRegex.exec(xml)) !== null && count < 10) {
       const itemXml = match[1];
-      const title = itemXml.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/)?.[1] 
+      const title = itemXml.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/)?.[1]
         || itemXml.match(/<title>(.*?)<\/title>/)?.[1] || '';
-      const link = itemXml.match(/<link>(.*?)<\/link>/)?.[1] 
+      const link = itemXml.match(/<link>(.*?)<\/link>/)?.[1]
         || itemXml.match(/<link\/>\s*(https?:\/\/[^\s<]+)/)?.[1] || '';
       const source = itemXml.match(/<source[^>]*>(.*?)<\/source>/)?.[1] || 'Unknown';
       const pubDate = itemXml.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || '';
@@ -80,7 +152,6 @@ async function fetchNewsData() {
         count++;
       }
     }
-
     return items;
   } catch (e) {
     console.error('News fetch error:', e);
@@ -105,17 +176,12 @@ async function fetchWeatherData(lat: number, lon: number, city?: string) {
           actualLon = geoData.results[0].longitude;
           cityName = `${geoData.results[0].name}, ${geoData.results[0].country}`;
         }
-      } else {
-        await geoRes.text();
-      }
+      } else { await geoRes.text(); }
     }
 
     const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${actualLat}&longitude=${actualLon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=auto`;
     const res = await fetch(weatherUrl);
-    if (!res.ok) {
-      await res.text();
-      return null;
-    }
+    if (!res.ok) { await res.text(); return null; }
     const data = await res.json();
 
     const weatherCodes: Record<number, { description: string; icon: string }> = {
@@ -173,13 +239,15 @@ serve(async (req) => {
     const lon = parseFloat(url.searchParams.get('lon') || '-74.0060');
     const city = url.searchParams.get('city') || '';
 
-    const [stocks, news, weather] = await Promise.all([
+    const [stocks, crypto, forex, news, weather] = await Promise.all([
       fetchStockData(),
+      fetchCryptoData(),
+      fetchForexData(),
       fetchNewsData(),
       fetchWeatherData(lat, lon, city || undefined),
     ]);
 
-    return new Response(JSON.stringify({ stocks, news, weather }), {
+    return new Response(JSON.stringify({ stocks, crypto, forex, news, weather }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
