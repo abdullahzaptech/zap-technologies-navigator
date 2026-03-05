@@ -36,7 +36,7 @@ const ServicesSection = () => {
   const description = content?.description || defaults.description;
 
   return (
-    <section className="py-24 bg-background">
+    <section id="services" className="py-24 bg-background">
       <div className="container px-4">
         <div className="text-center mb-16 max-w-3xl mx-auto">
           <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4 }} className="text-sm font-semibold tracking-widest uppercase text-primary mb-2">

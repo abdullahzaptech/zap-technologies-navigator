@@ -77,16 +77,19 @@ const PortfolioSection = () => {
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-14">
-          <Button size="lg" className="rounded-full px-8 text-base">
-            See More Projects
+          <Button size="lg" className="rounded-full px-8 text-base" asChild>
+            <a href="/portfolio">See More Projects</a>
           </Button>
           <Button
             size="lg"
             variant="outline"
             className="rounded-full px-8 text-base"
+            asChild
           >
-            Contact Us for Your Next Project
-            <ArrowRight className="ml-2 h-4 w-4" />
+            <a href="/contact">
+              Contact Us for Your Next Project
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </a>
           </Button>
         </div>
       </div>

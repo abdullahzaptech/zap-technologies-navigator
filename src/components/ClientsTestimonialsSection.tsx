@@ -155,8 +155,8 @@ const ClientsTestimonialsSection = () => {
 
           {/* CTA */}
           <div className="text-center mt-10">
-            <Button variant="outline" size="lg">
-              Read More Testimonials
+            <Button variant="outline" size="lg" asChild>
+              <a href="/contact">Get in Touch</a>
             </Button>
           </div>
         </div>
