@@ -65,7 +65,7 @@ const Footer = () => {
       <div className="container px-4 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
           <div className="lg:col-span-1">
-            <img src={zapLogo} alt="Zap Technologies" className="h-14 mb-6 brightness-0 invert" />
+            <img src={zapLogo} alt="Zap Technologies" className="h-14 md:h-14 w-auto" />
             <p className="text-sm leading-relaxed text-background/50">
               We craft innovative digital solutions that drive growth, streamline operations, and deliver measurable results for businesses worldwide.
             </p>
