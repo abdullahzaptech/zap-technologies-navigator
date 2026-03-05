@@ -1,12 +1,11 @@
 import { motion } from "framer-motion";
 
 const milestones = [
-  { year: "2015", title: "Founded", description: "Zap Technologies was founded with a vision to create cutting-edge software solutions for businesses of all sizes." },
-  { year: "2017", title: "Mobile Expansion", description: "Expanded into mobile app development, delivering iOS and Android solutions to a growing client base." },
-  { year: "2019", title: "50+ Projects Delivered", description: "Reached a major milestone of 50+ successfully delivered projects across multiple industries." },
-  { year: "2021", title: "Cloud & AI Division", description: "Launched our cloud solutions and AI consulting division, embracing the future of technology." },
-  { year: "2023", title: "Global Reach", description: "Expanded operations internationally, serving clients across 3 continents with a team of 30+ experts." },
-  { year: "2025", title: "Industry Recognition", description: "Awarded 'Best Tech Solutions Provider' and partnered with leading cloud platforms." },
+  { year: "2024", title: "Founded", description: "Zap Technologies was founded with a bold vision to deliver innovative digital solutions for businesses ready to scale." },
+  { year: "2024", title: "First Clients & Growth", description: "Rapidly onboarded our first clients, building websites, apps, and digital marketing strategies that delivered real results." },
+  { year: "2025", title: "80+ Projects Delivered", description: "Reached a major milestone of 80+ successfully delivered projects across web development, mobile apps, SEO, and AI solutions." },
+  { year: "2025", title: "Team Expansion", description: "Grew our talented team of developers, designers, and marketers to serve a wider range of industries and technologies." },
+  { year: "2026", title: "AI & Automation Division", description: "Launched our AI products and automation consulting division, helping businesses leverage cutting-edge technology for growth." },
 ];
 
 const AboutJourney = () => {
