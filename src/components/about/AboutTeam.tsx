@@ -32,6 +32,14 @@ const team = [
     bio: "Nadir is a skilled backend developer specializing in building robust, scalable server-side architectures. With deep expertise in databases, APIs, and cloud infrastructure, he ensures every application runs seamlessly and securely behind the scenes.",
     socials: { linkedin: "#" },
   },
+  {
+    name: "Muhammad Kamran Khan",
+    role: "Marketing Manager",
+    initials: "MK",
+    photo: teamKamran,
+    bio: "Kamran drives brand growth and digital marketing strategies at Zap Technologies. With a sharp eye for market trends and consumer behavior, he crafts compelling campaigns that connect audiences with our innovative solutions.",
+    socials: { linkedin: "#" },
+  },
 ];
 
 const BIO_LIMIT = 120;
