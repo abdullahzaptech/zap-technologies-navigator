@@ -265,35 +265,6 @@ const BookingWidget = () => {
                       className="space-y-4"
                     >
                       <div>
-                        <h3 className="text-sm font-semibold text-foreground mb-2">Select Meeting Type</h3>
-                        <div className="space-y-2">
-                          {meetingTypes.map((mt) => (
-                            <button
-                              key={mt.id}
-                              onClick={() => setSelectedMeetingType(mt.id)}
-                              className={cn(
-                                "w-full text-left p-2.5 rounded-lg border transition-all",
-                                selectedMeetingType === mt.id
-                                  ? "border-primary bg-primary/5 ring-1 ring-primary"
-                                  : "border-border hover:border-primary/40"
-                              )}
-                            >
-                              <div className="flex items-center justify-between">
-                                <span className="font-medium text-sm text-foreground">{mt.name}</span>
-                                <span className="text-xs text-muted-foreground flex items-center gap-1">
-                                  <Clock className="w-3 h-3" />
-                                  {mt.duration_minutes} min
-                                </span>
-                              </div>
-                              {mt.description && (
-                                <p className="text-xs text-muted-foreground mt-1">{mt.description}</p>
-                              )}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
                         <h3 className="text-base font-semibold text-foreground mb-2">Pick a Date</h3>
                         <Calendar
                           mode="single"
