@@ -1,44 +1,7 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const clientLogos = [
-  "TechCorp",
-  "InnovateCo",
-  "CloudNine",
-  "DataDrive",
-  "PixelPerfect",
-  "SwiftLogic",
-  "BrightPath",
-  "CoreStack",
-];
-
-const testimonials = [
-  {
-    quote:
-      "Zap Technologies transformed our digital presence entirely. Their team delivered a stunning web platform that boosted our conversions by 40% within three months.",
-    name: "Sarah Mitchell",
-    role: "CEO, TechCorp",
-    initials: "SM",
-    rating: 5,
-  },
-  {
-    quote:
-      "Working with Zap was seamless from start to finish. Their AI-powered solution automated our workflows and saved us hundreds of hours every quarter.",
-    name: "James Anderson",
-    role: "CTO, InnovateCo",
-    initials: "JA",
-    rating: 5,
-  },
-  {
-    quote:
-      "The mobile app they built for us exceeded all expectations. Our user engagement skyrocketed and app store ratings went from 3.2 to 4.8 stars.",
-    name: "Priya Sharma",
-    role: "Product Manager, CloudNine",
-    initials: "PS",
-    rating: 5,
-  },
-];
+import { clientLogos, testimonials } from "@/data/clientData";
 
 const ClientsTestimonialsSection = () => {
   const [current, setCurrent] = useState(0);
@@ -77,14 +40,12 @@ const ClientsTestimonialsSection = () => {
             Trusted by Leading Brands
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-            {clientLogos.map((name) => (
+            {clientLogos.map((client) => (
               <div
-                key={name}
-                className="flex items-center justify-center h-20 rounded-xl border border-border bg-card px-6 transition-all duration-300 hover:shadow-md hover:border-primary/20"
+                key={client.name}
+                className="flex items-center justify-center h-20 rounded-xl border border-border bg-card px-4 transition-all duration-300 hover:shadow-md hover:border-primary/20"
               >
-                <span className="text-lg font-bold tracking-wide text-muted-foreground/60 select-none">
-                  {name}
-                </span>
+                <img src={client.logo} alt={client.name} className="h-10 w-auto max-w-[120px] object-contain opacity-70 hover:opacity-100 transition-opacity" />
               </div>
             ))}
           </div>
