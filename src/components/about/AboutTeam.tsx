@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Linkedin, Twitter, Globe, ChevronDown, ChevronUp, Users, Quote, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import teamAbdullah from "@/assets/team-abdullah.png";
+import teamMinhaj from "@/assets/team-minhaj.png";
 
 const team = [
   {
@@ -14,10 +15,11 @@ const team = [
     socials: { linkedin: "#", twitter: "#" },
   },
   {
-    name: "John Smith",
+    name: "Syed Minhaj Haider Shah",
     role: "Senior Web Developer",
-    initials: "JS",
-    bio: "John specializes in full-stack development, building responsive and scalable web applications with a passion for clean code and user-friendly design. With expertise in modern frameworks and cloud architecture, he ensures every project meets the highest technical standards.",
+    initials: "SM",
+    photo: teamMinhaj,
+    bio: "Minhaj specializes in full-stack development, building responsive and scalable web applications with a passion for clean code and user-friendly design. With expertise in modern frameworks and cloud architecture, he ensures every project meets the highest technical standards.",
     socials: { linkedin: "#" },
   },
   {
