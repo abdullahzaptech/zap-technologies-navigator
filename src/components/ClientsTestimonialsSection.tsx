@@ -39,13 +39,13 @@ const ClientsTestimonialsSection = () => {
           <p className="text-center text-sm font-semibold tracking-widest uppercase text-muted-foreground mb-8">
             Trusted by Leading Brands
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
             {clientLogos.map((client) => (
               <div
                 key={client.name}
-                className="flex items-center justify-center h-20 rounded-xl border border-border bg-card px-4 transition-all duration-300 hover:shadow-md hover:border-primary/20"
+                className="flex items-center justify-center h-24 sm:h-28 rounded-xl border border-border bg-card px-6 transition-all duration-300 hover:shadow-md hover:border-primary/20"
               >
-                <img src={client.logo} alt={client.name} className="h-10 w-auto max-w-[120px] object-contain opacity-70 hover:opacity-100 transition-opacity" />
+                <img src={client.logo} alt={client.name} className="h-16 sm:h-20 w-auto max-w-[160px] object-contain opacity-80 hover:opacity-100 transition-opacity" />
               </div>
             ))}
           </div>
