@@ -60,9 +60,11 @@ const AboutHero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <Button variant="cta" size="lg" className="text-base px-8 py-6 group">
-            Get to Know Us
-            <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+          <Button variant="cta" size="lg" className="text-base px-8 py-6 group" asChild>
+            <a href="#mission">
+              Get to Know Us
+              <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+            </a>
           </Button>
         </motion.div>
       </div>
