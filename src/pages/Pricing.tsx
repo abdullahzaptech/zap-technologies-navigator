@@ -24,8 +24,8 @@ const fallbackMobilePackages = [
 ];
 
 const fallbackConsultingPackages = [
-  { name: "Hourly Consulting", price: "$150/hour", description: "For short-term advisory, code reviews, and strategy sessions.", features: [], delivery_time: null, sort_order: 0 },
-  { name: "Project-Based", price: "$3,000+ per project", description: "Business IT audits, software recommendations, strategy planning, and technology roadmaps.", features: [], delivery_time: null, sort_order: 1 },
+  { name: "Hourly Consulting", price: "$12/hour", description: "Ideal for short-term advisory, code reviews, and strategy sessions.", features: ["Personalized tech guidance", "Quick solutions for code, software, or infrastructure", "Flexible scheduling"], delivery_time: null, sort_order: 0 },
+  { name: "Project-Based Consulting", price: "Based on requirements", description: "Ideal for business IT audits, software recommendations, strategy planning, and technology roadmaps.", features: ["Full project evaluation", "Custom solutions based on company needs", "Optional ongoing support"], delivery_time: null, sort_order: 1 },
 ];
 
 const paymentTerms = [
@@ -89,7 +89,7 @@ const Pricing = () => {
 
   const webPackages: PkgDisplay[] = fallbackWebPackages.map((p, i) => ({ ...p, popular: i === 1 }));
   const mobilePackages: PkgDisplay[] = fallbackMobilePackages.map((p, i) => ({ ...p, popular: i === 1 }));
-  const consultingPackages = fallbackConsultingPackages.map(p => ({ name: p.name, price: p.price, desc: p.description || '' }));
+  const consultingPackages = fallbackConsultingPackages.map(p => ({ name: p.name, price: p.price, desc: p.description || '', features: p.features }));
 
   const submitMutation = useMutation({
     mutationFn: async (data: typeof form) => {
@@ -195,6 +195,15 @@ const Pricing = () => {
                     <h3 className="text-xl font-bold text-foreground mb-1">{pkg.name}</h3>
                     <p className="text-2xl font-bold text-primary mb-3">{pkg.price}</p>
                     <p className="text-sm text-muted-foreground mb-6">{pkg.desc}</p>
+                    {pkg.features.length > 0 && (
+                      <ul className="space-y-3 mb-6">
+                        {pkg.features.map((f) => (
+                          <li key={f} className="flex items-start gap-2 text-sm text-foreground/80">
+                            <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" /> {f}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                     <Button variant="outline" className="rounded-full w-full" asChild><a href="/contact">Inquire Now</a></Button>
                   </motion.div>
                 ))}
