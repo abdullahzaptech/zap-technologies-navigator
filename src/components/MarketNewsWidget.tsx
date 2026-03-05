@@ -119,6 +119,8 @@ const MarketNewsWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [weatherCity, setWeatherCity] = useState("");
   const [searchCity, setSearchCity] = useState("");
+  const [cryptoSearch, setCryptoSearch] = useState("");
+  const [forexSearch, setForexSearch] = useState("");
 
   const { data, isLoading, refetch, isFetching } = useQuery<MarketData>({
     queryKey: ["market-news-weather", searchCity],
@@ -131,6 +133,17 @@ const MarketNewsWidget = () => {
   const handleCitySearch = () => {
     if (weatherCity.trim()) setSearchCity(weatherCity.trim());
   };
+
+  const filteredCrypto = data?.crypto?.filter(c =>
+    c.symbol.toLowerCase().includes(cryptoSearch.toLowerCase()) ||
+    c.ticker.toLowerCase().includes(cryptoSearch.toLowerCase())
+  ) ?? [];
+
+  const filteredForex = data?.forex?.filter(fx =>
+    fx.pair.toLowerCase().includes(forexSearch.toLowerCase()) ||
+    fx.base.toLowerCase().includes(forexSearch.toLowerCase()) ||
+    fx.quote.toLowerCase().includes(forexSearch.toLowerCase())
+  ) ?? [];
 
   return (
     <>
@@ -217,14 +230,22 @@ const MarketNewsWidget = () => {
 
               {/* Crypto Tab */}
               <TabsContent value="crypto" className="mt-0">
-                <ScrollArea className="h-[320px]">
-                  <div className="p-3 space-y-2">
+                <div className="p-3 pb-0">
+                  <Input
+                    placeholder="Search crypto (BTC, Ethereum...)"
+                    value={cryptoSearch}
+                    onChange={(e) => setCryptoSearch(e.target.value)}
+                    className="h-8 text-xs bg-muted/50 border-border"
+                  />
+                </div>
+                <ScrollArea className="h-[290px]">
+                  <div className="p-3 pt-2 space-y-2">
                     {isLoading ? (
-                      Array.from({ length: 3 }).map((_, i) => (
+                      Array.from({ length: 5 }).map((_, i) => (
                         <div key={i} className="h-16 rounded-xl bg-muted animate-pulse" />
                       ))
-                    ) : data?.crypto?.length ? (
-                      data.crypto.map((coin, i) => (
+                    ) : filteredCrypto.length ? (
+                      filteredCrypto.map((coin, i) => (
                         <PriceCard
                           key={coin.symbol}
                           label={coin.symbol}
@@ -236,10 +257,12 @@ const MarketNewsWidget = () => {
                         />
                       ))
                     ) : (
-                      <p className="text-center text-sm text-muted-foreground py-8">No crypto data available</p>
+                      <p className="text-center text-sm text-muted-foreground py-8">
+                        {cryptoSearch ? "No matching crypto" : "No crypto data available"}
+                      </p>
                     )}
-                    <div className="pt-2 px-1">
-                      <p className="text-[10px] text-muted-foreground">Prices from CoinGecko • 24h change</p>
+                    <div className="pt-1 px-1">
+                      <p className="text-[10px] text-muted-foreground">15 coins from CoinGecko • 24h change</p>
                     </div>
                   </div>
                 </ScrollArea>
