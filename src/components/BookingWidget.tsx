@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CalendarClock, X, ChevronRight, ChevronLeft, Check, Clock, User, Mail, Phone, Loader2 } from "lucide-react";
+import { CalendarClock, X, ChevronRight, ChevronLeft, Check, User, Mail, Phone, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
