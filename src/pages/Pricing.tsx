@@ -89,7 +89,7 @@ const Pricing = () => {
 
   const webPackages: PkgDisplay[] = fallbackWebPackages.map((p, i) => ({ ...p, popular: i === 1 }));
   const mobilePackages: PkgDisplay[] = fallbackMobilePackages.map((p, i) => ({ ...p, popular: i === 1 }));
-  const consultingPackages = fallbackConsultingPackages.map(p => ({ name: p.name, price: p.price, desc: p.description || '' }));
+  const consultingPackages = fallbackConsultingPackages.map(p => ({ name: p.name, price: p.price, desc: p.description || '', features: p.features }));
 
   const submitMutation = useMutation({
     mutationFn: async (data: typeof form) => {
