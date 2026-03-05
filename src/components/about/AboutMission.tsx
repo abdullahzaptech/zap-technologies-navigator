@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Target, Eye } from "lucide-react";
-import aboutPerson from "@/assets/about-person.png";
+import teamAbdullah from "@/assets/team-abdullah.png";
 
 const AboutMission = () => {
   return (
@@ -15,10 +15,10 @@ const AboutMission = () => {
             transition={{ duration: 0.6 }}
             className="flex justify-center"
           >
-            <div className="w-[340px] h-[420px] sm:w-[400px] sm:h-[480px] rounded-3xl overflow-hidden border-4 border-accent/20 shadow-xl">
+            <div className="w-[340px] h-[420px] sm:w-[400px] sm:h-[480px] rounded-3xl overflow-hidden border-4 border-accent/20 shadow-xl bg-gradient-to-b from-primary/10 to-primary/5">
               <img
-                src={aboutPerson}
-                alt="Zap Technologies team"
+                src={teamAbdullah}
+                alt="Abdullah Munaim - CEO & Founder, Zap Technologies"
                 className="w-full h-full object-cover object-top"
               />
             </div>
