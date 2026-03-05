@@ -200,7 +200,7 @@ const LandingPage = () => {
               <CardContent className="p-6 md:p-8">
                 {submitted ? (
                   <div className="text-center py-8 space-y-4">
-                    <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
+                    <CheckCircle className="h-16 w-16 text-primary mx-auto" />
                     <h3 className="text-2xl font-bold text-foreground">Thank You!</h3>
                     <p className="text-muted-foreground">Your submission has been received. We'll get back to you soon.</p>
                     <Button variant="outline" onClick={() => { setSubmitted(false); setFormData({}); setFiles({}); }}>
