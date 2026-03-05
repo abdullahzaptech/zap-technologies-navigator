@@ -135,7 +135,7 @@ const Footer = () => {
       <div className="border-t border-background/10">
         <div className="container px-4 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-background/40">
           <span>© {new Date().getFullYear()} Zap Technologies. All rights reserved.</span>
-          <span>Designed & Built with ❤️</span>
+          <span>Designed & Built with ❤️ by Zap Technologies</span>
         </div>
       </div>
     </footer>);
