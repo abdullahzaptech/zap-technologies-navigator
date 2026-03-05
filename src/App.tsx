@@ -21,12 +21,13 @@ import ServiceDetailPage from "./pages/ServiceDetailPage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminBlog from "./pages/AdminBlog";
-
+import AdminLandingPages from "./pages/AdminLandingPages";
 import AdminQueries from "./pages/AdminQueries";
 import AdminLinks from "./pages/AdminLinks";
 import AdminContent from "./pages/AdminContent";
 import AdminSecurity from "./pages/AdminSecurity";
 import AdminBookings from "./pages/AdminBookings";
+import LandingPage from "./pages/LandingPage";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import BookingWidget from "./components/BookingWidget";
 import WhatsAppButton from "./components/WhatsAppButton";
@@ -54,11 +55,13 @@ const App = () => (
             <Route path="/cookie-policy" element={<CookiePolicy />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/services/:slug" element={<ServiceDetailPage />} />
+            <Route path="/p/:slug" element={<LandingPage />} />
 
             {/* Admin Routes */}
             <Route path="/admin/zaplogin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/blog" element={<ProtectedRoute><AdminBlog /></ProtectedRoute>} />
+            <Route path="/admin/landing-pages" element={<ProtectedRoute><AdminLandingPages /></ProtectedRoute>} />
             
             <Route path="/admin/queries" element={<ProtectedRoute><AdminQueries /></ProtectedRoute>} />
             <Route path="/admin/links" element={<ProtectedRoute><AdminLinks /></ProtectedRoute>} />
