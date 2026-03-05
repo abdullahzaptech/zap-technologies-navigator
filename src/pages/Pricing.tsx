@@ -24,8 +24,8 @@ const fallbackMobilePackages = [
 ];
 
 const fallbackConsultingPackages = [
-  { name: "Hourly Consulting", price: "$150/hour", description: "For short-term advisory, code reviews, and strategy sessions.", features: [], delivery_time: null, sort_order: 0 },
-  { name: "Project-Based", price: "$3,000+ per project", description: "Business IT audits, software recommendations, strategy planning, and technology roadmaps.", features: [], delivery_time: null, sort_order: 1 },
+  { name: "Hourly Consulting", price: "$12/hour", description: "Ideal for short-term advisory, code reviews, and strategy sessions.", features: ["Personalized tech guidance", "Quick solutions for code, software, or infrastructure", "Flexible scheduling"], delivery_time: null, sort_order: 0 },
+  { name: "Project-Based Consulting", price: "Based on requirements", description: "Ideal for business IT audits, software recommendations, strategy planning, and technology roadmaps.", features: ["Full project evaluation", "Custom solutions based on company needs", "Optional ongoing support"], delivery_time: null, sort_order: 1 },
 ];
 
 const paymentTerms = [
