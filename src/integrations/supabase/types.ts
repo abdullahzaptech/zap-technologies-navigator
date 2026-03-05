@@ -180,31 +180,37 @@ export type Database = {
       }
       form_queries: {
         Row: {
+          attachment_url: string | null
           created_at: string
           email: string
           id: string
           message: string | null
           name: string
+          project_link: string | null
           status: Database["public"]["Enums"]["query_status"]
           subject: string | null
           updated_at: string
         }
         Insert: {
+          attachment_url?: string | null
           created_at?: string
           email: string
           id?: string
           message?: string | null
           name: string
+          project_link?: string | null
           status?: Database["public"]["Enums"]["query_status"]
           subject?: string | null
           updated_at?: string
         }
         Update: {
+          attachment_url?: string | null
           created_at?: string
           email?: string
           id?: string
           message?: string | null
           name?: string
+          project_link?: string | null
           status?: Database["public"]["Enums"]["query_status"]
           subject?: string | null
           updated_at?: string
