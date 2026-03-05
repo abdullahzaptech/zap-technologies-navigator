@@ -270,12 +270,7 @@ const BookingWidget = () => {
                           {selectedMeetingTypeObj.name} • {selectedMeetingTypeObj.duration_minutes} min
                         </p>
                       )}
-                      {!settings ? (
-                        <div className="flex items-center justify-center py-8">
-                          <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                          <span className="ml-2 text-sm text-muted-foreground">Loading slots...</span>
-                        </div>
-                      ) : timeSlots.length === 0 ? (
+                      {timeSlots.length === 0 ? (
                         <p className="text-center text-muted-foreground py-8">No slots available for this date.</p>
                       ) : (
                         <div className="grid grid-cols-3 gap-2">
