@@ -6,6 +6,7 @@ import zapLogo from "@/assets/zap-logo.png";
 const fallbackQuickLinks = [
 { label: "Home", href: "/" },
 { label: "About", href: "/about" },
+{ label: "Our Team", href: "/team" },
 { label: "Contact", href: "/contact" },
 { label: "Blog", href: "/blog" }];
 
