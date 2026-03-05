@@ -76,7 +76,7 @@ const CTASection = () => {
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.5 }} className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-primary-foreground/50">
             <span className="flex items-center gap-2"><Zap className="h-4 w-4 text-accent" /> Fast Turnaround</span>
             <span className="hidden sm:block w-1 h-1 rounded-full bg-primary-foreground/20" />
-            <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-accent" /> 50+ Projects Delivered</span>
+            <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-accent" /> 80+ Projects Delivered</span>
             <span className="hidden sm:block w-1 h-1 rounded-full bg-primary-foreground/20" />
             <span className="flex items-center gap-2"><Rocket className="h-4 w-4 text-accent" /> 100% Satisfaction</span>
           </motion.div>

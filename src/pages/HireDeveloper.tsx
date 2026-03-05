@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { testimonials as sharedTestimonials } from "@/data/clientData";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -44,11 +45,7 @@ const pricingModels = [
   { title: "Project-Based", price: "From $100", desc: "Need a one-time project? Our developers can be hired on a fixed-price contract.", cta: "Get Project Quote", highlight: false },
 ];
 
-const testimonials = [
-  { quote: "Zap Technologies delivered our project on time and within budget. Their development team was responsive, professional, and incredibly skilled.", name: "Rajesh Kumar", role: "CTO, FinTech Solutions", initials: "RK" },
-  { quote: "We hired a full-stack developer from Zap and the quality of work exceeded our expectations. They integrated seamlessly with our existing team.", name: "Amanda Chen", role: "VP Engineering, CloudNine", initials: "AC" },
-  { quote: "The mobile app developer we hired built an exceptional product. Our app store rating jumped from 3.1 to 4.7 stars within weeks of launch.", name: "David Okafor", role: "Founder, HealthTrack", initials: "DO" },
-];
+const hireTestimonials = sharedTestimonials;
 
 /* ─── Component ─── */
 const HireDeveloper = () => {
@@ -276,23 +273,23 @@ const HireDeveloper = () => {
               <div className="flex justify-center gap-1 mb-6">
                 {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-5 w-5 fill-accent text-accent" />)}
               </div>
-              <p className="text-lg sm:text-xl leading-relaxed text-foreground/90 italic mb-8">"{testimonials[currentTestimonial].quote}"</p>
+              <p className="text-lg sm:text-xl leading-relaxed text-foreground/90 italic mb-8">"{hireTestimonials[currentTestimonial].quote}"</p>
               <div className="flex items-center justify-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-sm">{testimonials[currentTestimonial].initials}</div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-sm">{hireTestimonials[currentTestimonial].initials}</div>
                 <div className="text-left">
-                  <p className="font-semibold text-foreground">{testimonials[currentTestimonial].name}</p>
-                  <p className="text-sm text-muted-foreground">{testimonials[currentTestimonial].role}</p>
+                   <p className="font-semibold text-foreground">{hireTestimonials[currentTestimonial].name}</p>
+                   <p className="text-sm text-muted-foreground">{hireTestimonials[currentTestimonial].role}</p>
                 </div>
               </div>
-              <button onClick={() => setCurrentTestimonial((c) => (c - 1 + testimonials.length) % testimonials.length)} className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors" aria-label="Previous testimonial">
+              <button onClick={() => setCurrentTestimonial((c) => (c - 1 + hireTestimonials.length) % hireTestimonials.length)} className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors" aria-label="Previous testimonial">
                 <ChevronLeft className="h-5 w-5" />
               </button>
-              <button onClick={() => setCurrentTestimonial((c) => (c + 1) % testimonials.length)} className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors" aria-label="Next testimonial">
+              <button onClick={() => setCurrentTestimonial((c) => (c + 1) % hireTestimonials.length)} className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors" aria-label="Next testimonial">
                 <ChevronRightIcon className="h-5 w-5" />
               </button>
             </div>
             <div className="flex justify-center gap-2 mt-6">
-              {testimonials.map((_, i) => (
+              {hireTestimonials.map((_, i) => (
                 <button key={i} onClick={() => setCurrentTestimonial(i)} className={`h-2.5 rounded-full transition-all duration-300 ${i === currentTestimonial ? "w-8 bg-primary" : "w-2.5 bg-border hover:bg-muted-foreground/30"}`} aria-label={`Go to testimonial ${i + 1}`} />
               ))}
             </div>
