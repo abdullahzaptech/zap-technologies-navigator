@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.send-landing-submission-email]
 verify_jwt = false
+
+[functions.market-news-weather]
+verify_jwt = false
