@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Check, Star, ArrowRight, Send, CreditCard, Clock, DollarSign, ChevronDown, ChevronUp, Zap, Globe, Smartphone, Headphones, Loader2 } from "lucide-react";
+import { Check, Star, ArrowRight, Send, CreditCard, Clock, DollarSign, ChevronDown, ChevronUp, Zap, Globe, Smartphone, Headphones, Loader2, Paperclip, Link, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -85,7 +85,20 @@ const PricingCard = ({ pkg, index }: { pkg: PkgDisplay; index: number }) => (
 const Pricing = () => {
   const { toast } = useToast();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [form, setForm] = useState({ name: "", email: "", service: "", scope: "", budget: "", timeline: "" });
+  const [form, setForm] = useState({ name: "", email: "", service: "", scope: "", budget: "", timeline: "", projectLink: "" });
+  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0];
+    if (!selected) return;
+    if (selected.size > 10 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Maximum file size is 10 MB.", variant: "destructive" });
+      e.target.value = '';
+      return;
+    }
+    setFile(selected);
+  };
 
   const webPackages: PkgDisplay[] = fallbackWebPackages.map((p, i) => ({ ...p, popular: i === 1 }));
   const mobilePackages: PkgDisplay[] = fallbackMobilePackages.map((p, i) => ({ ...p, popular: i === 1 }));
@@ -93,32 +106,49 @@ const Pricing = () => {
 
   const submitMutation = useMutation({
     mutationFn: async (data: typeof form) => {
+      let attachmentUrl: string | null = null;
+
+      // Upload file if present
+      if (file) {
+        const ext = file.name.split('.').pop();
+        const filePath = `pricing-quotes/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error: uploadError } = await supabase.storage.from('form-attachments').upload(filePath, file);
+        if (uploadError) throw new Error('File upload failed: ' + uploadError.message);
+        const { data: urlData } = supabase.storage.from('form-attachments').getPublicUrl(filePath);
+        attachmentUrl = urlData.publicUrl;
+      }
+
+      const messageParts = [
+        data.scope ? `Scope: ${data.scope}` : '',
+        data.budget ? `Budget: ${data.budget}` : '',
+        data.timeline ? `Timeline: ${data.timeline}` : '',
+      ].filter(Boolean).join('\n');
+
       const { error } = await supabase.from('form_queries').insert({
         name: data.name,
         email: data.email,
         subject: `Quote Request: ${data.service || 'General'}`,
-        message: [
-          data.scope ? `Scope: ${data.scope}` : '',
-          data.budget ? `Budget: ${data.budget}` : '',
-          data.timeline ? `Timeline: ${data.timeline}` : '',
-        ].filter(Boolean).join('\n'),
-      });
+        message: messageParts,
+        project_link: data.projectLink || null,
+        attachment_url: attachmentUrl,
+      } as any);
       if (error) throw error;
 
-      // Send email notification
       try {
         await supabase.functions.invoke('send-contact-email', {
           body: {
             name: data.name, email: data.email,
             subject: `Quote Request: ${data.service || 'General'}`,
-            message: [data.scope ? `Scope: ${data.scope}` : '', data.budget ? `Budget: ${data.budget}` : '', data.timeline ? `Timeline: ${data.timeline}` : ''].filter(Boolean).join('\n'),
+            message: messageParts + (data.projectLink ? `\nProject Link: ${data.projectLink}` : '') + (attachmentUrl ? `\nAttachment: ${attachmentUrl}` : ''),
           },
         });
       } catch {}
     },
     onSuccess: () => {
       toast({ title: "Quote request received!", description: "We'll review your requirements and get back to you within 24 hours." });
-      setForm({ name: "", email: "", service: "", scope: "", budget: "", timeline: "" });
+      setForm({ name: "", email: "", service: "", scope: "", budget: "", timeline: "", projectLink: "" });
+      setFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     },
     onError: (e: Error) => {
       toast({ title: "Error", description: e.message, variant: "destructive" });
@@ -252,22 +282,51 @@ const Pricing = () => {
                   <label className="text-sm font-medium text-foreground mb-1.5 block">Budget Range</label>
                   <select value={form.budget} onChange={e => setForm({ ...form, budget: e.target.value })} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     <option value="">Select budget</option>
-                    <option>Under $5,000</option>
-                    <option>$5,000 – $10,000</option>
-                    <option>$10,000 – $25,000</option>
-                    <option>$25,000 – $50,000</option>
-                    <option>$50,000+</option>
+                    <option>Under $150</option>
+                    <option>$150 – $300</option>
+                    <option>$300 – $600</option>
+                    <option>$600 – $900</option>
+                    <option>$900 – $1,500</option>
+                    <option>$1,500+</option>
                   </select>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1.5 block">Timeline</label>
                   <select value={form.timeline} onChange={e => setForm({ ...form, timeline: e.target.value })} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     <option value="">Select timeline</option>
-                    <option>ASAP</option>
+                    <option>3–5 days</option>
+                    <option>1–2 weeks</option>
+                    <option>2–4 weeks</option>
                     <option>1–2 months</option>
-                    <option>3–6 months</option>
-                    <option>6+ months</option>
+                    <option>2–3 months</option>
+                    <option>3+ months</option>
                   </select>
+                </div>
+              </div>
+              {/* Project Link */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Project Link <span className="text-muted-foreground font-normal">(optional)</span></label>
+                <div className="relative">
+                  <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input value={form.projectLink} onChange={e => setForm({ ...form, projectLink: e.target.value })} placeholder="https://example.com or GitHub link" className="pl-10" />
+                </div>
+              </div>
+              {/* File Upload */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Attach a File <span className="text-muted-foreground font-normal">(max 10 MB)</span></label>
+                <div className="flex items-center gap-3">
+                  <input ref={fileInputRef} type="file" onChange={handleFileChange} className="hidden" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.zip,.txt,.pptx,.xls,.xlsx" />
+                  <Button type="button" variant="outline" className="rounded-full" onClick={() => fileInputRef.current?.click()}>
+                    <Paperclip className="w-4 h-4 mr-2" /> {file ? 'Change File' : 'Choose File'}
+                  </Button>
+                  {file && (
+                    <div className="flex items-center gap-2 text-sm text-foreground/80 bg-muted/50 rounded-full px-3 py-1.5">
+                      <span className="truncate max-w-[200px]">{file.name}</span>
+                      <button type="button" onClick={() => { setFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }} className="text-muted-foreground hover:text-foreground">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
               <Button variant="cta" type="submit" className="rounded-full px-8 w-full sm:w-auto" disabled={submitMutation.isPending}>
