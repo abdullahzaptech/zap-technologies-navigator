@@ -7,6 +7,7 @@ import teamMinhaj from "@/assets/team-minhaj.png";
 import teamNadir from "@/assets/team-nadir.png";
 import teamKamran from "@/assets/team-kamran.png";
 import teamFarhan from "@/assets/team-farhan.png";
+import teamAbdulRehman from "@/assets/team-abdulrehman.png";
 
 const team = [
   {
@@ -47,6 +48,14 @@ const team = [
     initials: "MF",
     photo: teamFarhan,
     bio: "Farhan combines AI expertise with Laravel development to build intelligent, scalable web solutions. With a deep understanding of machine learning and modern PHP frameworks, he bridges the gap between cutting-edge AI and robust backend systems.",
+    socials: { linkedin: "#" },
+  },
+  {
+    name: "Abdul Rehman",
+    role: "SEO & Meta Ads Specialist",
+    initials: "AR",
+    photo: teamAbdulRehman,
+    bio: "Abdul Rehman drives organic growth and paid advertising strategies at Zap Technologies. With expertise in SEO optimization and Meta Ads campaigns, he helps businesses maximize their online visibility and achieve measurable results.",
     socials: { linkedin: "#" },
   },
 ];
