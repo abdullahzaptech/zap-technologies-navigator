@@ -250,7 +250,8 @@ const HireDeveloper = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {pricingModels.map((p, i) => (
               <motion.div key={p.title} {...fadeUp} transition={{ delay: i * 0.1 }} className={`rounded-2xl border p-8 text-center transition-all ${p.highlight ? "border-primary bg-primary text-primary-foreground shadow-lg scale-[1.02]" : "border-border bg-card shadow-sm hover:shadow-md"}`}>
-                <h3 className={`font-bold text-xl mb-3 ${p.highlight ? "text-primary-foreground" : "text-foreground"}`}>{p.title}</h3>
+                <h3 className={`font-bold text-xl mb-2 ${p.highlight ? "text-primary-foreground" : "text-foreground"}`}>{p.title}</h3>
+                <p className={`text-2xl font-extrabold mb-3 ${p.highlight ? "text-accent" : "text-primary"}`}>{p.price}</p>
                 <p className={`text-sm leading-relaxed mb-6 ${p.highlight ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{p.desc}</p>
                 <Button variant={p.highlight ? "cta" : "outline"} className="rounded-full px-6" onClick={() => document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" })}>
                   {p.cta}
