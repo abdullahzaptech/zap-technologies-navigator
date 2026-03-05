@@ -2,13 +2,15 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Linkedin, Twitter, Globe, ChevronDown, ChevronUp, Users, Quote, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import teamAbdullah from "@/assets/team-abdullah.png";
 
 const team = [
   {
-    name: "Wajeeha Khan",
+    name: "Abdullah Munaim",
     role: "CEO & Founder",
-    initials: "WK",
-    bio: "With 10+ years in digital marketing and e-commerce, Wajeeha leads our team with a vision for innovative solutions and customer-focused strategies. She has built Zap Technologies from the ground up, driving growth through strategic leadership and a deep understanding of the digital landscape.",
+    initials: "AM",
+    photo: teamAbdullah,
+    bio: "Abdullah leads Zap Technologies with a vision for innovative solutions and customer-focused strategies. He has built the company from the ground up, driving growth through strategic leadership, technical expertise, and a deep understanding of the digital landscape.",
     socials: { linkedin: "#", twitter: "#" },
   },
   {
@@ -43,9 +45,13 @@ const TeamCard = ({ member, index }: { member: typeof team[0]; index: number }) 
       className="group relative text-center rounded-2xl border border-border bg-card p-8 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-primary/30"
     >
       {/* Avatar placeholder – will be replaced with photos later */}
-      <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-2xl font-bold tracking-wide transition-transform duration-300 group-hover:scale-110 shadow-lg shadow-primary/20">
-        {member.initials}
-      </div>
+      {member.photo ? (
+        <img src={member.photo} alt={member.name} className="mx-auto mb-6 h-24 w-24 rounded-full object-cover transition-transform duration-300 group-hover:scale-110 shadow-lg shadow-primary/20" />
+      ) : (
+        <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-2xl font-bold tracking-wide transition-transform duration-300 group-hover:scale-110 shadow-lg shadow-primary/20">
+          {member.initials}
+        </div>
+      )}
 
       <h3 className="font-bold text-foreground text-lg mb-1">{member.name}</h3>
       <p className="text-sm text-primary font-semibold mb-4">{member.role}</p>
@@ -148,7 +154,7 @@ const AboutTeam = () => {
           <blockquote className="text-lg sm:text-xl italic text-foreground/80 leading-relaxed mb-4">
             "Our people are our strength – together, we achieve excellence."
           </blockquote>
-          <p className="text-sm font-semibold text-primary">— Wajeeha Khan, CEO & Founder</p>
+          <p className="text-sm font-semibold text-primary">— Abdullah Munaim, CEO & Founder</p>
         </motion.div>
 
         {/* Join Our Team CTA */}
