@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Code2, Smartphone, Layout, Server, Palette, Users, Target, Trophy,
   Clock, Zap, ChevronRight, Star, Quote, CheckCircle2, Send,
@@ -55,14 +56,50 @@ const HireDeveloper = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", description: "", budget: "", role: "", timeline: "" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.email.trim() || !formData.description.trim()) {
       toast({ title: "Please fill in required fields", variant: "destructive" });
       return;
     }
-    toast({ title: "Project details submitted!", description: "We'll get back to you within 24 hours." });
-    setFormData({ name: "", email: "", phone: "", description: "", budget: "", role: "", timeline: "" });
+
+    setSubmitting(true);
+    try {
+      // Save to database
+      const subject = `Hire Developer — ${formData.role || "General"} | Budget: ${formData.budget || "Not specified"}`;
+      const message = `Project Description:\n${formData.description}\n\nPreferred Role: ${formData.role || "Not specified"}\nBudget: ${formData.budget || "Not specified"}\nTimeline: ${formData.timeline || "Not specified"}\nPhone: ${formData.phone || "Not provided"}`;
+
+      const { error: dbError } = await supabase.from("form_queries").insert({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        subject,
+        message,
+      });
+      if (dbError) throw dbError;
+
+      // Send email notification
+      await supabase.functions.invoke("send-contact-email", {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          inquiryType: "Hire a Developer",
+          budget: formData.budget || null,
+          timeline: formData.timeline || null,
+          message: formData.description,
+        },
+      });
+
+      toast({ title: "Project details submitted!", description: "We'll get back to you within 24 hours." });
+      setFormData({ name: "", email: "", phone: "", description: "", budget: "", role: "", timeline: "" });
+    } catch (err: any) {
+      console.error("Submit error:", err);
+      toast({ title: "Something went wrong", description: "Please try again or contact us directly.", variant: "destructive" });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const fadeUp = { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } };
@@ -324,8 +361,8 @@ const HireDeveloper = () => {
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" variant="cta" size="lg" className="w-full rounded-full">
-              Submit Project Details <Send className="ml-2 h-4 w-4" />
+            <Button type="submit" variant="cta" size="lg" className="w-full rounded-full" disabled={submitting}>
+              {submitting ? "Submitting..." : "Submit Project Details"} <Send className="ml-2 h-4 w-4" />
             </Button>
           </motion.form>
         </div>
