@@ -44,30 +44,50 @@ async function fetchStockData() {
 
 async function fetchCryptoData() {
   try {
+    const ids = 'bitcoin,ethereum,solana,binancecoin,ripple,cardano,dogecoin,polkadot,avalanche-2,chainlink,polygon,tron,litecoin,shiba-inu,uniswap';
     const res = await fetch(
-      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true',
+      `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`,
       { headers: { 'User-Agent': 'Mozilla/5.0' } }
     );
     if (!res.ok) { await res.text(); return []; }
     const data = await res.json();
     
-    const map: Record<string, { name: string; icon: string }> = {
-      bitcoin: { name: 'Bitcoin', icon: '₿' },
-      ethereum: { name: 'Ethereum', icon: 'Ξ' },
-      solana: { name: 'Solana', icon: 'SOL' },
+    const map: Record<string, { name: string; ticker: string }> = {
+      bitcoin: { name: 'Bitcoin', ticker: 'BTC' },
+      ethereum: { name: 'Ethereum', ticker: 'ETH' },
+      solana: { name: 'Solana', ticker: 'SOL' },
+      binancecoin: { name: 'BNB', ticker: 'BNB' },
+      ripple: { name: 'XRP', ticker: 'XRP' },
+      cardano: { name: 'Cardano', ticker: 'ADA' },
+      dogecoin: { name: 'Dogecoin', ticker: 'DOGE' },
+      polkadot: { name: 'Polkadot', ticker: 'DOT' },
+      'avalanche-2': { name: 'Avalanche', ticker: 'AVAX' },
+      chainlink: { name: 'Chainlink', ticker: 'LINK' },
+      polygon: { name: 'Polygon', ticker: 'MATIC' },
+      tron: { name: 'TRON', ticker: 'TRX' },
+      litecoin: { name: 'Litecoin', ticker: 'LTC' },
+      'shiba-inu': { name: 'Shiba Inu', ticker: 'SHIB' },
+      uniswap: { name: 'Uniswap', ticker: 'UNI' },
     };
 
-    return Object.entries(data).map(([key, val]: [string, any]) => {
-      const price = val.usd ?? 0;
-      const change24h = val.usd_24h_change ?? 0;
-      return {
-        symbol: map[key]?.name ?? key,
-        ticker: map[key]?.icon ?? key.toUpperCase(),
-        price: price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-        changePercent: change24h.toFixed(2),
-        currency: 'USD',
-      };
-    });
+    // Sort by market relevance (order of ids)
+    const order = ids.split(',');
+    return order
+      .filter(key => data[key])
+      .map((key) => {
+        const val = data[key];
+        const price = val.usd ?? 0;
+        const change24h = val.usd_24h_change ?? 0;
+        return {
+          symbol: map[key]?.name ?? key,
+          ticker: map[key]?.ticker ?? key.toUpperCase(),
+          price: price < 1 
+            ? price.toFixed(6) 
+            : price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          changePercent: change24h.toFixed(2),
+          currency: 'USD',
+        };
+      });
   } catch (e) {
     console.error('Crypto fetch error:', e);
     return [];
