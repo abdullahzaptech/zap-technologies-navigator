@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import teamAbdullah from "@/assets/team-abdullah.png";
 import teamMinhaj from "@/assets/team-minhaj.png";
 import teamNadir from "@/assets/team-nadir.png";
+import teamKamran from "@/assets/team-kamran.png";
 
 const team = [
   {
@@ -29,6 +30,14 @@ const team = [
     initials: "NH",
     photo: teamNadir,
     bio: "Nadir is a skilled backend developer specializing in building robust, scalable server-side architectures. With deep expertise in databases, APIs, and cloud infrastructure, he ensures every application runs seamlessly and securely behind the scenes.",
+    socials: { linkedin: "#" },
+  },
+  {
+    name: "Muhammad Kamran Khan",
+    role: "Marketing Manager",
+    initials: "MK",
+    photo: teamKamran,
+    bio: "Kamran drives brand growth and digital marketing strategies at Zap Technologies. With a sharp eye for market trends and consumer behavior, he crafts compelling campaigns that connect audiences with our innovative solutions.",
     socials: { linkedin: "#" },
   },
 ];
@@ -140,7 +149,7 @@ const AboutTeam = () => {
         </motion.div>
 
         {/* Team cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
           {team.map((member, i) => (
             <TeamCard key={member.name} member={member} index={i} />
           ))}
