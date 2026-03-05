@@ -361,8 +361,8 @@ const HireDeveloper = () => {
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" variant="cta" size="lg" className="w-full rounded-full">
-              Submit Project Details <Send className="ml-2 h-4 w-4" />
+            <Button type="submit" variant="cta" size="lg" className="w-full rounded-full" disabled={submitting}>
+              {submitting ? "Submitting..." : "Submit Project Details"} <Send className="ml-2 h-4 w-4" />
             </Button>
           </motion.form>
         </div>
