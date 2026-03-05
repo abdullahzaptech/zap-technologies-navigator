@@ -59,7 +59,7 @@ const TeamCard = ({ member, index }: { member: typeof team[0]; index: number }) 
     >
       {/* Avatar placeholder – will be replaced with photos later */}
       {member.photo ? (
-        <img src={member.photo} alt={member.name} className="mx-auto mb-6 h-24 w-24 rounded-full object-cover transition-transform duration-300 group-hover:scale-110 shadow-lg shadow-primary/20" />
+        <img src={member.photo} alt={member.name} className="mx-auto mb-6 h-24 w-24 rounded-full object-cover object-top transition-transform duration-300 group-hover:scale-110 shadow-lg shadow-primary/20" />
       ) : (
         <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-2xl font-bold tracking-wide transition-transform duration-300 group-hover:scale-110 shadow-lg shadow-primary/20">
           {member.initials}
