@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { projects, type ProjectData } from "@/data/portfolioData";
+import { projects, categories, type ProjectData, type Category } from "@/data/portfolioData";
 import ProjectModal from "@/components/portfolio/ProjectModal";
 import Header from "@/components/Header";
 import CTASection from "@/components/CTASection";
@@ -11,6 +11,12 @@ import Footer from "@/components/Footer";
 const Portfolio = () => {
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<Category>("All");
+
+  const filteredProjects =
+    activeCategory === "All"
+      ? projects
+      : projects.filter((p) => p.category === activeCategory);
 
   const openProject = (project: ProjectData) => {
     setSelectedProject(project);
@@ -66,22 +72,52 @@ const Portfolio = () => {
         </div>
       </section>
 
-      {/* Projects Grid */}
+      {/* Category Tabs + Projects Grid */}
       <section className="py-24 bg-background">
         <div className="container px-4">
-          <div className="max-w-6xl mx-auto space-y-6">
-            {/* Top row — 2 large */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {projects.slice(0, 2).map((project, i) => (
-                <ProjectCard key={project.title} project={project} index={i} onClick={() => openProject(project)} />
-              ))}
-            </div>
-            {/* Bottom row — 3 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.slice(2).map((project, i) => (
-                <ProjectCard key={project.title} project={project} index={i + 2} onClick={() => openProject(project)} />
-              ))}
-            </div>
+          {/* Category Filter */}
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-14">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 border ${
+                  activeCategory === cat
+                    ? "bg-primary text-primary-foreground border-primary shadow-md"
+                    : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                }`}
+              >
+                {cat}
+                {cat !== "All" && (
+                  <span className="ml-1.5 text-xs opacity-70">
+                    ({projects.filter((p) => p.category === cat).length})
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Projects Grid */}
+          <div className="max-w-6xl mx-auto">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeCategory}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.3 }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                {filteredProjects.map((project, i) => (
+                  <ProjectCard
+                    key={project.title}
+                    project={project}
+                    index={i}
+                    onClick={() => openProject(project)}
+                  />
+                ))}
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-14">
@@ -115,7 +151,7 @@ const ProjectCard = ({
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: index * 0.08 }}
+      transition={{ duration: 0.4, delay: index * 0.05 }}
       onClick={onClick}
       className="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:shadow-xl cursor-pointer"
     >
@@ -125,7 +161,6 @@ const ProjectCard = ({
           alt={project.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        {/* Hover Overlay */}
         <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <span className="text-xs font-semibold uppercase tracking-wider text-accent mb-1">
             {project.category}
@@ -133,13 +168,12 @@ const ProjectCard = ({
           <h3 className="text-lg font-bold text-primary-foreground mb-2">
             {project.title}
           </h3>
-          <p className="text-sm text-primary-foreground/80 leading-relaxed">
+          <p className="text-sm text-primary-foreground/80 leading-relaxed line-clamp-2">
             {project.description}
           </p>
           <p className="text-xs text-accent font-semibold mt-3">Click to view details →</p>
         </div>
       </div>
-      {/* Title bar visible by default */}
       <div className="p-4 transition-opacity duration-300 group-hover:opacity-0">
         <span className="text-xs font-semibold uppercase tracking-wider text-primary">
           {project.category}
