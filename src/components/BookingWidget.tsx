@@ -43,19 +43,8 @@ const BookingWidget = () => {
     }
   }, [meetingTypes, selectedMeetingType]);
 
-  // Fetch booking settings
-  const { data: settings } = useQuery({
-    queryKey: ["booking-settings"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("booking_settings")
-        .select("*")
-        .limit(1)
-        .single();
-      if (error) throw error;
-      return data;
-    },
-  });
+  // Use hardcoded 24/7 slots - no need to fetch booking settings
+  const slotInterval = 60; // 1-hour slots
 
   // Fetch existing bookings for selected date
   const { data: existingBookings = [] } = useQuery({
@@ -74,20 +63,11 @@ const BookingWidget = () => {
     enabled: !!selectedDate,
   });
 
-  // Generate time slots
+  // Generate 24/7 time slots (1-hour intervals)
   const getTimeSlots = () => {
-    if (!settings) return [];
-    const startParts = (settings.work_start_time as string).split(":");
-    const endParts = (settings.work_end_time as string).split(":");
-    const startMinutes = parseInt(startParts[0]) * 60 + parseInt(startParts[1]);
-    const endMinutes = parseInt(endParts[0]) * 60 + parseInt(endParts[1]);
-    const interval = settings.slot_duration_minutes || 30;
     const slots: string[] = [];
-
-    for (let m = startMinutes; m < endMinutes; m += interval) {
-      const h = Math.floor(m / 60);
-      const min = m % 60;
-      slots.push(`${h.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}`);
+    for (let h = 0; h < 24; h++) {
+      slots.push(`${h.toString().padStart(2, "0")}:00`);
     }
     return slots;
   };
@@ -98,13 +78,11 @@ const BookingWidget = () => {
 
   const timeSlots = getTimeSlots();
 
-  // Disable past dates and non-working days
+  // Disable past dates only (all days of week are available)
   const isDateDisabled = (date: Date) => {
     if (isBefore(date, startOfDay(new Date()))) return true;
     if (isAfter(date, addDays(new Date(), 60))) return true;
-    const dayOfWeek = date.getDay();
-    const workingDays = settings?.working_days || [1, 2, 3, 4, 5];
-    return !(workingDays as number[]).includes(dayOfWeek);
+    return false;
   };
 
   // Submit booking
@@ -292,12 +270,7 @@ const BookingWidget = () => {
                           {selectedMeetingTypeObj.name} • {selectedMeetingTypeObj.duration_minutes} min
                         </p>
                       )}
-                      {!settings ? (
-                        <div className="flex items-center justify-center py-8">
-                          <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                          <span className="ml-2 text-sm text-muted-foreground">Loading slots...</span>
-                        </div>
-                      ) : timeSlots.length === 0 ? (
+                      {timeSlots.length === 0 ? (
                         <p className="text-center text-muted-foreground py-8">No slots available for this date.</p>
                       ) : (
                         <div className="grid grid-cols-3 gap-2">
