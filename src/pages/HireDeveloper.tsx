@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { testimonials as sharedTestimonials } from "@/data/clientData";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -44,11 +45,7 @@ const pricingModels = [
   { title: "Project-Based", price: "From $100", desc: "Need a one-time project? Our developers can be hired on a fixed-price contract.", cta: "Get Project Quote", highlight: false },
 ];
 
-const testimonials = [
-  { quote: "Zap Technologies delivered our project on time and within budget. Their development team was responsive, professional, and incredibly skilled.", name: "Rajesh Kumar", role: "CTO, FinTech Solutions", initials: "RK" },
-  { quote: "We hired a full-stack developer from Zap and the quality of work exceeded our expectations. They integrated seamlessly with our existing team.", name: "Amanda Chen", role: "VP Engineering, CloudNine", initials: "AC" },
-  { quote: "The mobile app developer we hired built an exceptional product. Our app store rating jumped from 3.1 to 4.7 stars within weeks of launch.", name: "David Okafor", role: "Founder, HealthTrack", initials: "DO" },
-];
+const hireTestimonials = sharedTestimonials;
 
 /* ─── Component ─── */
 const HireDeveloper = () => {
