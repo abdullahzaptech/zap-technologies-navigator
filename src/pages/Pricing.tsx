@@ -18,9 +18,9 @@ const fallbackWebPackages = [
 ];
 
 const fallbackMobilePackages = [
-  { name: "Basic App", description: "Ideal for small mobile applications", price: "$5,000", delivery_time: "4–6 weeks", features: ["One platform (iOS or Android)", "Basic user interface", "Core functionality", "App store submission"], sort_order: 0 },
-  { name: "Custom App", description: "Custom features for growing businesses", price: "$10,000 – $20,000", delivery_time: "6–8 weeks", features: ["Two platforms (iOS & Android)", "Custom UI/UX design", "API integrations", "User authentication", "Push notifications"], sort_order: 1 },
-  { name: "Enterprise App", description: "Large-scale apps with advanced integrations", price: "$25,000 – $50,000+", delivery_time: "8+ weeks", features: ["Multi-platform (iOS & Android)", "Enterprise integrations", "User management system", "Payment gateway", "Admin dashboard", "Priority support"], sort_order: 2 },
+  { name: "Starter App", description: "Perfect for small businesses or MVPs", price: "From $150", delivery_time: "2–3 weeks", features: ["Single platform (iOS or Android)", "Basic UI/UX design", "Core functionality (1–3 features)", "App store submission assistance", "1 revision"], sort_order: 0 },
+  { name: "Business App", description: "For startups and growing businesses", price: "$400 – $700", delivery_time: "3–6 weeks", features: ["Single or dual platform (iOS & Android)", "Custom UI/UX design", "Up to 5 features / screens", "Push notifications", "API integration (basic)", "Analytics integration", "2–3 revisions"], sort_order: 1 },
+  { name: "Professional App", description: "For companies and full-scale applications", price: "$900 – $1,500+", delivery_time: "6–10 weeks", features: ["Multi-platform (iOS & Android)", "Full custom design", "User authentication & management", "Up to 10–15 screens/features", "Payment gateway & integrations", "Push notifications & analytics dashboard", "Performance optimization & security setup", "Unlimited revisions"], sort_order: 2 },
 ];
 
 const fallbackConsultingPackages = [
