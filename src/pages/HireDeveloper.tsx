@@ -350,10 +350,13 @@ const HireDeveloper = () => {
                 <Select value={formData.budget} onValueChange={(v) => setFormData({ ...formData, budget: v })}>
                   <SelectTrigger><SelectValue placeholder="Select budget" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="<5k">Under $5,000</SelectItem>
-                    <SelectItem value="5k-15k">$5,000 – $15,000</SelectItem>
-                    <SelectItem value="15k-50k">$15,000 – $50,000</SelectItem>
-                    <SelectItem value="50k+">$50,000+</SelectItem>
+                    <SelectItem value="<100">Under $100</SelectItem>
+                    <SelectItem value="100-300">$100 – $300</SelectItem>
+                    <SelectItem value="300-600">$300 – $600</SelectItem>
+                    <SelectItem value="600-1000">$600 – $1,000</SelectItem>
+                    <SelectItem value="1000-1500">$1,000 – $1,500</SelectItem>
+                    <SelectItem value="1500+">$1,500+</SelectItem>
+                    <SelectItem value="custom">Custom / Not Sure</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -367,6 +370,9 @@ const HireDeveloper = () => {
                     <SelectItem value="backend">Back-End Developer</SelectItem>
                     <SelectItem value="mobile">Mobile App Developer</SelectItem>
                     <SelectItem value="uiux">UI/UX Designer</SelectItem>
+                    <SelectItem value="seo">SEO & Meta Ads Specialist</SelectItem>
+                    <SelectItem value="ai">AI / ML Developer</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -377,12 +383,65 @@ const HireDeveloper = () => {
                 <SelectTrigger><SelectValue placeholder="When do you need this?" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="asap">As soon as possible</SelectItem>
+                  <SelectItem value="1week">Within 1 week</SelectItem>
+                  <SelectItem value="2weeks">Within 2 weeks</SelectItem>
                   <SelectItem value="1month">Within 1 month</SelectItem>
                   <SelectItem value="3months">Within 3 months</SelectItem>
                   <SelectItem value="flexible">Flexible</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Project Link */}
+            <div className="space-y-2">
+              <Label htmlFor="projectLink" className="flex items-center gap-1.5">
+                <Link className="h-3.5 w-3.5" /> Project Link <span className="text-muted-foreground text-xs">(optional)</span>
+              </Label>
+              <Input id="projectLink" type="url" placeholder="https://example.com or GitHub/Figma link" value={formData.projectLink} onChange={(e) => setFormData({ ...formData, projectLink: e.target.value })} />
+            </div>
+
+            {/* File Attachment */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-1.5">
+                <Paperclip className="h-3.5 w-3.5" /> Attach File <span className="text-muted-foreground text-xs">(optional, max 10MB)</span>
+              </Label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.zip,.txt,.pptx,.xlsx"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 10 * 1024 * 1024) {
+                      toast({ title: "File too large", description: "Maximum file size is 10MB.", variant: "destructive" });
+                      return;
+                    }
+                    setAttachment(file);
+                  }
+                }}
+              />
+              {attachment ? (
+                <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 px-4 py-3">
+                  <Paperclip className="h-4 w-4 text-primary shrink-0" />
+                  <span className="text-sm text-foreground truncate flex-1">{attachment.name}</span>
+                  <span className="text-xs text-muted-foreground shrink-0">{(attachment.size / 1024 / 1024).toFixed(1)} MB</span>
+                  <button type="button" onClick={() => { setAttachment(null); if (fileInputRef.current) fileInputRef.current.value = ''; }} className="text-muted-foreground hover:text-destructive transition-colors">
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full rounded-lg border-2 border-dashed border-border hover:border-primary/30 bg-muted/30 px-4 py-4 text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2"
+                >
+                  <Paperclip className="h-4 w-4" />
+                  Click to attach a file (PDF, DOC, Image, ZIP)
+                </button>
+              )}
+            </div>
+
             <Button type="submit" variant="cta" size="lg" className="w-full rounded-full" disabled={submitting}>
               {submitting ? "Submitting..." : "Submit Project Details"} <Send className="ml-2 h-4 w-4" />
             </Button>
