@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Code2, Smartphone, Layout, Server, Palette, Users, Target, Trophy,
   Clock, Zap, ChevronRight, Star, Quote, CheckCircle2, Send,
-  ChevronLeft, ChevronRight as ChevronRightIcon
+  ChevronLeft, ChevronRight as ChevronRightIcon, Paperclip, Link, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,9 +39,9 @@ const steps = [
 ];
 
 const pricingModels = [
-  { title: "Hourly Rate", desc: "Hire our developers on an hourly basis for smaller projects or ongoing support.", cta: "Get Hourly Quote", highlight: false },
-  { title: "Full-Time Developer", desc: "Hire a dedicated full-time developer committed to your project for maximum productivity.", cta: "Hire Full-Time", highlight: true },
-  { title: "Project-Based", desc: "Need a one-time project? Our developers can be hired on a fixed-price contract.", cta: "Get Project Quote", highlight: false },
+  { title: "Hourly Rate", price: "From $12/hr", desc: "Hire our developers on an hourly basis for smaller projects or ongoing support.", cta: "Get Hourly Quote", highlight: false },
+  { title: "Full-Time Developer", price: "From $400/mo", desc: "Hire a dedicated full-time developer committed to your project for maximum productivity.", cta: "Hire Full-Time", highlight: true },
+  { title: "Project-Based", price: "From $100", desc: "Need a one-time project? Our developers can be hired on a fixed-price contract.", cta: "Get Project Quote", highlight: false },
 ];
 
 const testimonials = [
@@ -54,7 +54,9 @@ const testimonials = [
 const HireDeveloper = () => {
   const { toast } = useToast();
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
-  const [formData, setFormData] = useState({ name: "", email: "", phone: "", description: "", budget: "", role: "", timeline: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", description: "", budget: "", role: "", timeline: "", projectLink: "" });
+  const [attachment, setAttachment] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -67,19 +69,35 @@ const HireDeveloper = () => {
 
     setSubmitting(true);
     try {
-      // Save to database
+      // Upload attachment if present
+      let attachmentUrl: string | null = null;
+      if (attachment) {
+        if (attachment.size > 10 * 1024 * 1024) {
+          toast({ title: "File too large", description: "Maximum file size is 10MB.", variant: "destructive" });
+          setSubmitting(false);
+          return;
+        }
+        const fileExt = attachment.name.split('.').pop();
+        const filePath = `hire/${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage.from('form-attachments').upload(filePath, attachment);
+        if (uploadError) throw uploadError;
+        const { data: urlData } = supabase.storage.from('form-attachments').getPublicUrl(filePath);
+        attachmentUrl = urlData.publicUrl;
+      }
+
       const subject = `Hire Developer — ${formData.role || "General"} | Budget: ${formData.budget || "Not specified"}`;
-      const message = `Project Description:\n${formData.description}\n\nPreferred Role: ${formData.role || "Not specified"}\nBudget: ${formData.budget || "Not specified"}\nTimeline: ${formData.timeline || "Not specified"}\nPhone: ${formData.phone || "Not provided"}`;
+      const message = `Project Description:\n${formData.description}\n\nPreferred Role: ${formData.role || "Not specified"}\nBudget: ${formData.budget || "Not specified"}\nTimeline: ${formData.timeline || "Not specified"}\nPhone: ${formData.phone || "Not provided"}\nProject Link: ${formData.projectLink || "Not provided"}`;
 
       const { error: dbError } = await supabase.from("form_queries").insert({
         name: formData.name.trim(),
         email: formData.email.trim(),
         subject,
         message,
+        project_link: formData.projectLink.trim() || null,
+        attachment_url: attachmentUrl,
       });
       if (dbError) throw dbError;
 
-      // Send email notification
       await supabase.functions.invoke("send-contact-email", {
         body: {
           name: formData.name,
@@ -89,11 +107,14 @@ const HireDeveloper = () => {
           budget: formData.budget || null,
           timeline: formData.timeline || null,
           message: formData.description,
+          projectLink: formData.projectLink || null,
+          attachmentUrl,
         },
       });
 
       toast({ title: "Project details submitted!", description: "We'll get back to you within 24 hours." });
-      setFormData({ name: "", email: "", phone: "", description: "", budget: "", role: "", timeline: "" });
+      setFormData({ name: "", email: "", phone: "", description: "", budget: "", role: "", timeline: "", projectLink: "" });
+      setAttachment(null);
     } catch (err: any) {
       console.error("Submit error:", err);
       toast({ title: "Something went wrong", description: "Please try again or contact us directly.", variant: "destructive" });
@@ -229,7 +250,8 @@ const HireDeveloper = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {pricingModels.map((p, i) => (
               <motion.div key={p.title} {...fadeUp} transition={{ delay: i * 0.1 }} className={`rounded-2xl border p-8 text-center transition-all ${p.highlight ? "border-primary bg-primary text-primary-foreground shadow-lg scale-[1.02]" : "border-border bg-card shadow-sm hover:shadow-md"}`}>
-                <h3 className={`font-bold text-xl mb-3 ${p.highlight ? "text-primary-foreground" : "text-foreground"}`}>{p.title}</h3>
+                <h3 className={`font-bold text-xl mb-2 ${p.highlight ? "text-primary-foreground" : "text-foreground"}`}>{p.title}</h3>
+                <p className={`text-2xl font-extrabold mb-3 ${p.highlight ? "text-accent" : "text-primary"}`}>{p.price}</p>
                 <p className={`text-sm leading-relaxed mb-6 ${p.highlight ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{p.desc}</p>
                 <Button variant={p.highlight ? "cta" : "outline"} className="rounded-full px-6" onClick={() => document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" })}>
                   {p.cta}
@@ -328,10 +350,13 @@ const HireDeveloper = () => {
                 <Select value={formData.budget} onValueChange={(v) => setFormData({ ...formData, budget: v })}>
                   <SelectTrigger><SelectValue placeholder="Select budget" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="<5k">Under $5,000</SelectItem>
-                    <SelectItem value="5k-15k">$5,000 – $15,000</SelectItem>
-                    <SelectItem value="15k-50k">$15,000 – $50,000</SelectItem>
-                    <SelectItem value="50k+">$50,000+</SelectItem>
+                    <SelectItem value="<100">Under $100</SelectItem>
+                    <SelectItem value="100-300">$100 – $300</SelectItem>
+                    <SelectItem value="300-600">$300 – $600</SelectItem>
+                    <SelectItem value="600-1000">$600 – $1,000</SelectItem>
+                    <SelectItem value="1000-1500">$1,000 – $1,500</SelectItem>
+                    <SelectItem value="1500+">$1,500+</SelectItem>
+                    <SelectItem value="custom">Custom / Not Sure</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -345,6 +370,9 @@ const HireDeveloper = () => {
                     <SelectItem value="backend">Back-End Developer</SelectItem>
                     <SelectItem value="mobile">Mobile App Developer</SelectItem>
                     <SelectItem value="uiux">UI/UX Designer</SelectItem>
+                    <SelectItem value="seo">SEO & Meta Ads Specialist</SelectItem>
+                    <SelectItem value="ai">AI / ML Developer</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -355,12 +383,65 @@ const HireDeveloper = () => {
                 <SelectTrigger><SelectValue placeholder="When do you need this?" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="asap">As soon as possible</SelectItem>
+                  <SelectItem value="1week">Within 1 week</SelectItem>
+                  <SelectItem value="2weeks">Within 2 weeks</SelectItem>
                   <SelectItem value="1month">Within 1 month</SelectItem>
                   <SelectItem value="3months">Within 3 months</SelectItem>
                   <SelectItem value="flexible">Flexible</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Project Link */}
+            <div className="space-y-2">
+              <Label htmlFor="projectLink" className="flex items-center gap-1.5">
+                <Link className="h-3.5 w-3.5" /> Project Link <span className="text-muted-foreground text-xs">(optional)</span>
+              </Label>
+              <Input id="projectLink" type="url" placeholder="https://example.com or GitHub/Figma link" value={formData.projectLink} onChange={(e) => setFormData({ ...formData, projectLink: e.target.value })} />
+            </div>
+
+            {/* File Attachment */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-1.5">
+                <Paperclip className="h-3.5 w-3.5" /> Attach File <span className="text-muted-foreground text-xs">(optional, max 10MB)</span>
+              </Label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.zip,.txt,.pptx,.xlsx"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 10 * 1024 * 1024) {
+                      toast({ title: "File too large", description: "Maximum file size is 10MB.", variant: "destructive" });
+                      return;
+                    }
+                    setAttachment(file);
+                  }
+                }}
+              />
+              {attachment ? (
+                <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 px-4 py-3">
+                  <Paperclip className="h-4 w-4 text-primary shrink-0" />
+                  <span className="text-sm text-foreground truncate flex-1">{attachment.name}</span>
+                  <span className="text-xs text-muted-foreground shrink-0">{(attachment.size / 1024 / 1024).toFixed(1)} MB</span>
+                  <button type="button" onClick={() => { setAttachment(null); if (fileInputRef.current) fileInputRef.current.value = ''; }} className="text-muted-foreground hover:text-destructive transition-colors">
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full rounded-lg border-2 border-dashed border-border hover:border-primary/30 bg-muted/30 px-4 py-4 text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2"
+                >
+                  <Paperclip className="h-4 w-4" />
+                  Click to attach a file (PDF, DOC, Image, ZIP)
+                </button>
+              )}
+            </div>
+
             <Button type="submit" variant="cta" size="lg" className="w-full rounded-full" disabled={submitting}>
               {submitting ? "Submitting..." : "Submit Project Details"} <Send className="ml-2 h-4 w-4" />
             </Button>
