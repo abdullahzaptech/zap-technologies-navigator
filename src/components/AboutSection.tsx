@@ -37,7 +37,7 @@ const AboutSection = () => {
             className="flex justify-center"
           >
             <div className="relative">
-              <div className="w-[340px] h-[420px] sm:w-[400px] sm:h-[500px] rounded-full bg-accent/10 overflow-hidden flex items-end justify-center border-4 border-accent/20">
+              <div className="w-[340px] h-[420px] sm:w-[400px] sm:h-[500px] rounded-full bg-primary/10 overflow-hidden flex items-end justify-center border-4 border-primary/20">
                 <img
                   src={aboutPerson}
                   alt="Zap Technologies team member"
