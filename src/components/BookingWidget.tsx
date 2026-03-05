@@ -287,33 +287,41 @@ const BookingWidget = () => {
                       <h3 className="text-base font-semibold text-foreground mb-1">
                         Available Slots — {selectedDate && format(selectedDate, "EEEE, MMM d")}
                       </h3>
-                      <p className="text-xs text-muted-foreground mb-4">
-                        {selectedMeetingTypeObj?.name} • {selectedMeetingTypeObj?.duration_minutes} min
-                      </p>
-                      <div className="grid grid-cols-3 gap-2">
-                        {timeSlots.map((t) => {
-                          const taken = bookedTimes.has(t);
-                          return (
-                            <button
-                              key={t}
-                              disabled={taken}
-                              onClick={() => setSelectedTime(t)}
-                              className={cn(
-                                "py-2.5 px-2 rounded-lg text-sm font-medium transition-all border",
-                                taken
-                                  ? "bg-muted text-muted-foreground/50 border-border cursor-not-allowed line-through"
-                                  : selectedTime === t
-                                  ? "bg-primary text-primary-foreground border-primary"
-                                  : "border-border hover:border-primary/40 text-foreground"
-                              )}
-                            >
-                              {formatTime12(t)}
-                            </button>
-                          );
-                        })}
-                      </div>
-                      {timeSlots.length === 0 && (
-                        <p className="text-center text-muted-foreground py-8">No slots configured.</p>
+                      {selectedMeetingTypeObj && (
+                        <p className="text-xs text-muted-foreground mb-4">
+                          {selectedMeetingTypeObj.name} • {selectedMeetingTypeObj.duration_minutes} min
+                        </p>
+                      )}
+                      {!settings ? (
+                        <div className="flex items-center justify-center py-8">
+                          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                          <span className="ml-2 text-sm text-muted-foreground">Loading slots...</span>
+                        </div>
+                      ) : timeSlots.length === 0 ? (
+                        <p className="text-center text-muted-foreground py-8">No slots available for this date.</p>
+                      ) : (
+                        <div className="grid grid-cols-3 gap-2">
+                          {timeSlots.map((t) => {
+                            const taken = bookedTimes.has(t);
+                            return (
+                              <button
+                                key={t}
+                                disabled={taken}
+                                onClick={() => setSelectedTime(t)}
+                                className={cn(
+                                  "py-2.5 px-2 rounded-lg text-sm font-medium transition-all border",
+                                  taken
+                                    ? "bg-muted text-muted-foreground/50 border-border cursor-not-allowed line-through"
+                                    : selectedTime === t
+                                    ? "bg-primary text-primary-foreground border-primary"
+                                    : "border-border hover:border-primary/40 text-foreground"
+                                )}
+                              >
+                                {formatTime12(t)}
+                              </button>
+                            );
+                          })}
+                        </div>
                       )}
                     </motion.div>
                   )}
