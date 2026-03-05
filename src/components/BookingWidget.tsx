@@ -36,6 +36,13 @@ const BookingWidget = () => {
     },
   });
 
+  // Auto-select first meeting type
+  useEffect(() => {
+    if (meetingTypes.length > 0 && !selectedMeetingType) {
+      setSelectedMeetingType(meetingTypes[0].id);
+    }
+  }, [meetingTypes, selectedMeetingType]);
+
   // Fetch booking settings
   const { data: settings } = useQuery({
     queryKey: ["booking-settings"],
@@ -449,7 +456,7 @@ const BookingWidget = () => {
                     <Button
                       size="sm"
                       onClick={() => setStep("time")}
-                      disabled={!selectedDate || !selectedMeetingType}
+                      disabled={!selectedDate}
                       className="gap-1"
                     >
                       Next <ChevronRight className="w-4 h-4" />
