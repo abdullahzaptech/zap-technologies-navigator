@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CalendarClock, X, ChevronRight, ChevronLeft, Check, Clock, User, Mail, Phone, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,13 @@ const BookingWidget = () => {
       return data;
     },
   });
+
+  // Auto-select first meeting type
+  useEffect(() => {
+    if (meetingTypes.length > 0 && !selectedMeetingType) {
+      setSelectedMeetingType(meetingTypes[0].id);
+    }
+  }, [meetingTypes, selectedMeetingType]);
 
   // Fetch booking settings
   const { data: settings } = useQuery({
@@ -258,35 +265,6 @@ const BookingWidget = () => {
                       className="space-y-4"
                     >
                       <div>
-                        <h3 className="text-sm font-semibold text-foreground mb-2">Select Meeting Type</h3>
-                        <div className="space-y-2">
-                          {meetingTypes.map((mt) => (
-                            <button
-                              key={mt.id}
-                              onClick={() => setSelectedMeetingType(mt.id)}
-                              className={cn(
-                                "w-full text-left p-2.5 rounded-lg border transition-all",
-                                selectedMeetingType === mt.id
-                                  ? "border-primary bg-primary/5 ring-1 ring-primary"
-                                  : "border-border hover:border-primary/40"
-                              )}
-                            >
-                              <div className="flex items-center justify-between">
-                                <span className="font-medium text-sm text-foreground">{mt.name}</span>
-                                <span className="text-xs text-muted-foreground flex items-center gap-1">
-                                  <Clock className="w-3 h-3" />
-                                  {mt.duration_minutes} min
-                                </span>
-                              </div>
-                              {mt.description && (
-                                <p className="text-xs text-muted-foreground mt-1">{mt.description}</p>
-                              )}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
                         <h3 className="text-base font-semibold text-foreground mb-2">Pick a Date</h3>
                         <Calendar
                           mode="single"
@@ -449,7 +427,7 @@ const BookingWidget = () => {
                     <Button
                       size="sm"
                       onClick={() => setStep("time")}
-                      disabled={!selectedDate || !selectedMeetingType}
+                      disabled={!selectedDate}
                       className="gap-1"
                     >
                       Next <ChevronRight className="w-4 h-4" />
