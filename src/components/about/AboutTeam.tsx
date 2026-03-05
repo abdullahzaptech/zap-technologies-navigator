@@ -4,6 +4,7 @@ import { Linkedin, Twitter, Globe, ChevronDown, ChevronUp, Users, Quote, ArrowRi
 import { Button } from "@/components/ui/button";
 import teamAbdullah from "@/assets/team-abdullah.png";
 import teamMinhaj from "@/assets/team-minhaj.png";
+import teamNadir from "@/assets/team-nadir.png";
 
 const team = [
   {
@@ -23,10 +24,11 @@ const team = [
     socials: { linkedin: "#" },
   },
   {
-    name: "Team Member",
-    role: "Marketing Manager",
-    initials: "TM",
-    bio: "Our marketing expert brings creative campaigns to life with data-driven strategies that deliver measurable results. Specializing in SEO, content marketing, and brand development, they help our clients achieve outstanding digital presence and growth.",
+    name: "Nadir Hussain",
+    role: "Senior Web Developer (Backend)",
+    initials: "NH",
+    photo: teamNadir,
+    bio: "Nadir is a skilled backend developer specializing in building robust, scalable server-side architectures. With deep expertise in databases, APIs, and cloud infrastructure, he ensures every application runs seamlessly and securely behind the scenes.",
     socials: { linkedin: "#" },
   },
 ];
