@@ -65,6 +65,14 @@ const Contact = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: "", email: "", phone: "", inquiryType: "", budget: "", timeline: "", message: "", projectLink: "",
+    // Service Request fields
+    serviceType: "", projectScope: "",
+    // Support Request fields
+    issueType: "", urgency: "", existingProjectUrl: "",
+    // Partnership fields
+    companyName: "", partnershipType: "", website: "",
+    // Other
+    subject: "",
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -85,11 +93,44 @@ const Contact = () => {
     setSelectedFile(file);
   };
 
+  const buildMessage = () => {
+    const parts = [formData.message];
+    if (formData.phone) parts.push(`Phone: ${formData.phone}`);
+
+    switch (formData.inquiryType) {
+      case "Service Request":
+        if (formData.serviceType) parts.push(`Service Needed: ${formData.serviceType}`);
+        if (formData.budget) parts.push(`Budget: ${formData.budget}`);
+        if (formData.timeline) parts.push(`Timeline: ${formData.timeline}`);
+        if (formData.projectScope) parts.push(`Project Scope: ${formData.projectScope}`);
+        if (formData.projectLink) parts.push(`Project Link: ${formData.projectLink}`);
+        break;
+      case "Support Request":
+        if (formData.issueType) parts.push(`Issue Type: ${formData.issueType}`);
+        if (formData.urgency) parts.push(`Urgency: ${formData.urgency}`);
+        if (formData.existingProjectUrl) parts.push(`Project URL: ${formData.existingProjectUrl}`);
+        break;
+      case "Partnership Inquiry":
+        if (formData.companyName) parts.push(`Company: ${formData.companyName}`);
+        if (formData.partnershipType) parts.push(`Partnership Type: ${formData.partnershipType}`);
+        if (formData.website) parts.push(`Website: ${formData.website}`);
+        break;
+      case "Other":
+        if (formData.subject) parts.push(`Subject: ${formData.subject}`);
+        break;
+      default:
+        if (formData.budget) parts.push(`Budget: ${formData.budget}`);
+        if (formData.timeline) parts.push(`Timeline: ${formData.timeline}`);
+        if (formData.projectLink) parts.push(`Project Link: ${formData.projectLink}`);
+        break;
+    }
+    return parts.filter(Boolean).join("\n");
+  };
+
   const submitMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
       let attachmentUrl: string | null = null;
 
-      // Upload file if selected
       if (selectedFile) {
         const fileExt = selectedFile.name.split(".").pop();
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
@@ -108,25 +149,19 @@ const Contact = () => {
         name: data.name,
         email: data.email,
         subject: data.inquiryType || null,
-        message: [
-          data.message,
-          data.phone ? `Phone: ${data.phone}` : "",
-          data.budget ? `Budget: ${data.budget}` : "",
-          data.timeline ? `Timeline: ${data.timeline}` : "",
-          data.projectLink ? `Project Link: ${data.projectLink}` : "",
-          attachmentUrl ? `Attachment: ${attachmentUrl}` : "",
-        ].filter(Boolean).join("\n"),
+        message: buildMessage(),
+        project_link: data.projectLink || data.existingProjectUrl || data.website || null,
+        attachment_url: attachmentUrl,
       });
       if (error) throw error;
 
-      // Send email notification
       supabase.functions.invoke("send-contact-email", {
         body: { ...data, attachmentUrl },
       }).catch((err) => console.error("Email notification failed:", err));
     },
     onSuccess: () => {
       toast({ title: "Message sent!", description: "We'll get back to you within 24 hours." });
-      setFormData({ name: "", email: "", phone: "", inquiryType: "", budget: "", timeline: "", message: "", projectLink: "" });
+      setFormData({ name: "", email: "", phone: "", inquiryType: "", budget: "", timeline: "", message: "", projectLink: "", serviceType: "", projectScope: "", issueType: "", urgency: "", existingProjectUrl: "", companyName: "", partnershipType: "", website: "", subject: "" });
       setSelectedFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
     },
@@ -143,6 +178,259 @@ const Contact = () => {
     }
     submitMutation.mutate(formData);
   };
+
+  const messagePlaceholders: Record<string, string> = {
+    "Service Request": "Describe the service you need, features, target audience, etc.",
+    "Support Request": "Describe the issue you're facing in detail...",
+    "Partnership Inquiry": "Tell us about your company and how you'd like to collaborate...",
+    "General Inquiry": "Tell us about your project or inquiry...",
+    "Other": "What would you like to discuss?",
+  };
+
+  const renderDynamicFields = () => {
+    switch (formData.inquiryType) {
+      case "Service Request":
+        return (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <Label>Service Needed *</Label>
+                <Select value={formData.serviceType} onValueChange={(v) => handleChange("serviceType", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select service" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Web Development">Web Development</SelectItem>
+                    <SelectItem value="Mobile App Development">Mobile App Development</SelectItem>
+                    <SelectItem value="UI/UX Design">UI/UX Design</SelectItem>
+                    <SelectItem value="Cloud & DevOps">Cloud & DevOps</SelectItem>
+                    <SelectItem value="AI / SaaS">AI / SaaS Solutions</SelectItem>
+                    <SelectItem value="Custom Software">Custom Software</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Project Scope</Label>
+                <Select value={formData.projectScope} onValueChange={(v) => handleChange("projectScope", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select scope" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Small (Landing page / MVP)">Small (Landing page / MVP)</SelectItem>
+                    <SelectItem value="Medium (Full website / App)">Medium (Full website / App)</SelectItem>
+                    <SelectItem value="Large (Enterprise solution)">Large (Enterprise solution)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <Label>Budget Range (optional)</Label>
+                <Select value={formData.budget} onValueChange={(v) => handleChange("budget", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select budget" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="< $5k">Less than $5,000</SelectItem>
+                    <SelectItem value="$5k-$15k">$5,000 – $15,000</SelectItem>
+                    <SelectItem value="$15k-$50k">$15,000 – $50,000</SelectItem>
+                    <SelectItem value="$50k+">$50,000+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Timeline</Label>
+                <Select value={formData.timeline} onValueChange={(v) => handleChange("timeline", v)}>
+                  <SelectTrigger><SelectValue placeholder="When to start?" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ASAP">As soon as possible</SelectItem>
+                    <SelectItem value="1-2 months">1 – 2 months</SelectItem>
+                    <SelectItem value="3-6 months">3 – 6 months</SelectItem>
+                    <SelectItem value="Not sure">Not sure yet</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="projectLink" className="flex items-center gap-2">
+                <Link2 className="w-4 h-4 text-primary" />
+                Project Link / Reference URL (optional)
+              </Label>
+              <Input id="projectLink" type="url" placeholder="https://your-project.com or https://figma.com/..." value={formData.projectLink} onChange={(e) => handleChange("projectLink", e.target.value)} maxLength={500} />
+            </div>
+            {renderFileUpload()}
+          </>
+        );
+
+      case "Support Request":
+        return (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <Label>Issue Type *</Label>
+                <Select value={formData.issueType} onValueChange={(v) => handleChange("issueType", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select issue type" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Bug / Error">Bug / Error</SelectItem>
+                    <SelectItem value="Performance Issue">Performance Issue</SelectItem>
+                    <SelectItem value="Feature Not Working">Feature Not Working</SelectItem>
+                    <SelectItem value="Account / Access Issue">Account / Access Issue</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Urgency</Label>
+                <Select value={formData.urgency} onValueChange={(v) => handleChange("urgency", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select urgency" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Low">Low – No rush</SelectItem>
+                    <SelectItem value="Medium">Medium – Within a few days</SelectItem>
+                    <SelectItem value="High">High – Urgent, blocking work</SelectItem>
+                    <SelectItem value="Critical">Critical – System down</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="existingProjectUrl" className="flex items-center gap-2">
+                <Link2 className="w-4 h-4 text-primary" />
+                Affected Project / URL
+              </Label>
+              <Input id="existingProjectUrl" type="url" placeholder="https://your-app.com/affected-page" value={formData.existingProjectUrl} onChange={(e) => handleChange("existingProjectUrl", e.target.value)} maxLength={500} />
+            </div>
+            {renderFileUpload()}
+          </>
+        );
+
+      case "Partnership Inquiry":
+        return (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <Label htmlFor="companyName">Company Name *</Label>
+                <Input id="companyName" placeholder="Your company name" value={formData.companyName} onChange={(e) => handleChange("companyName", e.target.value)} maxLength={100} />
+              </div>
+              <div className="space-y-2">
+                <Label>Partnership Type</Label>
+                <Select value={formData.partnershipType} onValueChange={(v) => handleChange("partnershipType", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Technology Partner">Technology Partner</SelectItem>
+                    <SelectItem value="Reseller / Referral">Reseller / Referral</SelectItem>
+                    <SelectItem value="White Label">White Label</SelectItem>
+                    <SelectItem value="Joint Venture">Joint Venture</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="website" className="flex items-center gap-2">
+                <Link2 className="w-4 h-4 text-primary" />
+                Company Website
+              </Label>
+              <Input id="website" type="url" placeholder="https://yourcompany.com" value={formData.website} onChange={(e) => handleChange("website", e.target.value)} maxLength={500} />
+            </div>
+          </>
+        );
+
+      case "Other":
+        return (
+          <div className="space-y-2">
+            <Label htmlFor="subject">Subject *</Label>
+            <Input id="subject" placeholder="What is this about?" value={formData.subject} onChange={(e) => handleChange("subject", e.target.value)} maxLength={200} />
+          </div>
+        );
+
+      case "General Inquiry":
+      default:
+        return (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <Label>Budget Range (optional)</Label>
+                <Select value={formData.budget} onValueChange={(v) => handleChange("budget", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select budget" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="< $5k">Less than $5,000</SelectItem>
+                    <SelectItem value="$5k-$15k">$5,000 – $15,000</SelectItem>
+                    <SelectItem value="$15k-$50k">$15,000 – $50,000</SelectItem>
+                    <SelectItem value="$50k+">$50,000+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Timeline (optional)</Label>
+                <Select value={formData.timeline} onValueChange={(v) => handleChange("timeline", v)}>
+                  <SelectTrigger><SelectValue placeholder="When to start?" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ASAP">As soon as possible</SelectItem>
+                    <SelectItem value="1-2 months">1 – 2 months</SelectItem>
+                    <SelectItem value="3-6 months">3 – 6 months</SelectItem>
+                    <SelectItem value="Not sure">Not sure yet</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="projectLink" className="flex items-center gap-2">
+                <Link2 className="w-4 h-4 text-primary" />
+                Project Link / Reference URL (optional)
+              </Label>
+              <Input id="projectLink" type="url" placeholder="https://your-project.com or https://figma.com/..." value={formData.projectLink} onChange={(e) => handleChange("projectLink", e.target.value)} maxLength={500} />
+            </div>
+            {renderFileUpload()}
+          </>
+        );
+    }
+  };
+
+  const renderFileUpload = () => (
+    <div className="space-y-2">
+      <Label className="flex items-center gap-2">
+        <Paperclip className="w-4 h-4 text-primary" />
+        Attach a File (optional)
+      </Label>
+      <div className="relative">
+        <input
+          ref={fileInputRef}
+          type="file"
+          onChange={handleFileSelect}
+          accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.zip,.txt"
+          className="hidden"
+          id="file-upload"
+        />
+        {!selectedFile ? (
+          <label
+            htmlFor="file-upload"
+            className="flex items-center justify-center gap-3 p-4 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group"
+          >
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+              <Paperclip className="w-5 h-5 text-primary" />
+            </div>
+            <div className="text-left">
+              <p className="text-sm font-medium">Click to upload a file</p>
+              <p className="text-xs text-muted-foreground">PDF, DOC, PNG, JPG, ZIP, TXT — Max 10MB</p>
+            </div>
+          </label>
+        ) : (
+          <div className="flex items-center gap-3 p-3 bg-primary/5 border border-primary/20 rounded-xl">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <FileText className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{selectedFile.name}</p>
+              <p className="text-xs text-muted-foreground">{(selectedFile.size / 1024).toFixed(1)} KB</p>
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+              onClick={() => { setSelectedFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -173,6 +461,7 @@ const Contact = () => {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 max-w-6xl mx-auto">
             {/* Form */}
             <motion.form onSubmit={handleSubmit} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="lg:col-span-3 bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-sm space-y-5">
+              {/* Always visible: Name, Email, Phone, Inquiry Type */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2">
                   <Label htmlFor="name">Name *</Label>
@@ -200,103 +489,13 @@ const Contact = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div className="space-y-2">
-                  <Label>Budget Range (optional)</Label>
-                  <Select value={formData.budget} onValueChange={(v) => handleChange("budget", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select budget" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="< $5k">Less than $5,000</SelectItem>
-                      <SelectItem value="$5k-$15k">$5,000 – $15,000</SelectItem>
-                      <SelectItem value="$15k-$50k">$15,000 – $50,000</SelectItem>
-                      <SelectItem value="$50k+">$50,000+</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Timeline (optional)</Label>
-                  <Select value={formData.timeline} onValueChange={(v) => handleChange("timeline", v)}>
-                    <SelectTrigger><SelectValue placeholder="When to start?" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ASAP">As soon as possible</SelectItem>
-                      <SelectItem value="1-2 months">1 – 2 months</SelectItem>
-                      <SelectItem value="3-6 months">3 – 6 months</SelectItem>
-                      <SelectItem value="Not sure">Not sure yet</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+              {/* Dynamic fields based on inquiry type */}
+              {renderDynamicFields()}
 
-              {/* Project Link */}
-              <div className="space-y-2">
-                <Label htmlFor="projectLink" className="flex items-center gap-2">
-                  <Link2 className="w-4 h-4 text-primary" />
-                  Project Link / Reference URL (optional)
-                </Label>
-                <Input
-                  id="projectLink"
-                  type="url"
-                  placeholder="https://your-project.com or https://figma.com/..."
-                  value={formData.projectLink}
-                  onChange={(e) => handleChange("projectLink", e.target.value)}
-                  maxLength={500}
-                />
-              </div>
-
-              {/* File Upload */}
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2">
-                  <Paperclip className="w-4 h-4 text-primary" />
-                  Attach a File (optional)
-                </Label>
-                <div className="relative">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    onChange={handleFileSelect}
-                    accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.zip,.txt"
-                    className="hidden"
-                    id="file-upload"
-                  />
-                  {!selectedFile ? (
-                    <label
-                      htmlFor="file-upload"
-                      className="flex items-center justify-center gap-3 p-4 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group"
-                    >
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <Paperclip className="w-5 h-5 text-primary" />
-                      </div>
-                      <div className="text-left">
-                        <p className="text-sm font-medium">Click to upload a file</p>
-                        <p className="text-xs text-muted-foreground">PDF, DOC, PNG, JPG, ZIP, TXT — Max 10MB</p>
-                      </div>
-                    </label>
-                  ) : (
-                    <div className="flex items-center gap-3 p-3 bg-primary/5 border border-primary/20 rounded-xl">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <FileText className="w-5 h-5 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{selectedFile.name}</p>
-                        <p className="text-xs text-muted-foreground">{(selectedFile.size / 1024).toFixed(1)} KB</p>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                        onClick={() => { setSelectedFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
+              {/* Message - always visible */}
               <div className="space-y-2">
                 <Label htmlFor="message">Message *</Label>
-                <Textarea id="message" placeholder="Tell us about your project or inquiry..." rows={5} value={formData.message} onChange={(e) => handleChange("message", e.target.value)} required maxLength={2000} />
+                <Textarea id="message" placeholder={messagePlaceholders[formData.inquiryType] || messagePlaceholders["General Inquiry"]} rows={5} value={formData.message} onChange={(e) => handleChange("message", e.target.value)} required maxLength={2000} />
               </div>
 
               <Button type="submit" variant="cta" size="lg" className="w-full sm:w-auto rounded-full px-10 text-base gap-2" disabled={submitMutation.isPending}>
