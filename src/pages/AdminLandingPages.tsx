@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import {
   Plus, Pencil, Trash2, Search, FileText, Loader2, Eye, EyeOff,
-  ArrowUp, ArrowDown, GripVertical, Download, ExternalLink, ChevronDown, ChevronUp
+  ArrowUp, ArrowDown, GripVertical, Download, ExternalLink, ChevronDown, ChevronUp, Upload, Image
 } from 'lucide-react';
 
 type LandingPage = {
@@ -576,9 +576,32 @@ const AdminLandingPages = () => {
                             onChange={e => updateSection(section.id, { content: { body: e.target.value } })} />
                         )}
                         {section.section_type === 'image' && (
-                          <div className="space-y-2">
-                            <Input placeholder="Image URL" value={(section.content as Record<string, string>)?.url || ''}
-                              onChange={e => updateSection(section.id, { content: { ...section.content as Record<string, string>, url: e.target.value } })} />
+                          <div className="space-y-3">
+                            {(section.content as Record<string, string>)?.url && (
+                              <img src={(section.content as Record<string, string>).url} alt={(section.content as Record<string, string>)?.alt || ''} className="h-24 w-auto rounded-md border border-border object-cover" />
+                            )}
+                            <div className="flex items-center gap-2">
+                              <label className="flex items-center gap-2 px-4 py-2 border border-input rounded-md cursor-pointer hover:bg-muted transition-colors text-sm flex-shrink-0">
+                                <Upload className="h-4 w-4" />
+                                Upload Image
+                                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                                  const file = e.target.files?.[0];
+                                  if (!file) return;
+                                  const ext = file.name.split('.').pop();
+                                  const path = `landing-images/${Date.now()}-${file.name.replace(/\s+/g, '_')}`;
+                                  toast.loading('Uploading image...');
+                                  const { error } = await supabase.storage.from('form-attachments').upload(path, file);
+                                  toast.dismiss();
+                                  if (error) { toast.error('Upload failed: ' + error.message); return; }
+                                  const { data: urlData } = supabase.storage.from('form-attachments').getPublicUrl(path);
+                                  updateSection(section.id, { content: { ...section.content as Record<string, string>, url: urlData.publicUrl } });
+                                  toast.success('Image uploaded!');
+                                }} />
+                              </label>
+                              <span className="text-xs text-muted-foreground">or</span>
+                              <Input placeholder="Paste image URL" value={(section.content as Record<string, string>)?.url || ''} className="flex-1"
+                                onChange={e => updateSection(section.id, { content: { ...section.content as Record<string, string>, url: e.target.value } })} />
+                            </div>
                             <Input placeholder="Alt text" value={(section.content as Record<string, string>)?.alt || ''}
                               onChange={e => updateSection(section.id, { content: { ...section.content as Record<string, string>, alt: e.target.value } })} />
                           </div>
