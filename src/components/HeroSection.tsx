@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Smartphone, Cloud, Code, ArrowRight, CheckCircle, Users, Briefcase, Star } from "lucide-react";
+import { clientLogos as clientData } from "@/data/clientData";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 
@@ -14,14 +15,10 @@ const defaults = {
 };
 
 const stats = [
-  { label: "Projects Completed", value: 100, suffix: "+" },
-  { label: "Clients Served", value: 50, suffix: "+" },
+  { label: "Projects Completed", value: 80, suffix: "+" },
+  { label: "Clients Served", value: 40, suffix: "+" },
   { label: "Customer Satisfaction", value: 98, suffix: "%" },
-  { label: "Years Experience", value: 5, suffix: "+" },
-];
-
-const clientLogos = [
-  "TechCorp", "InnovateLabs", "CloudFirst", "DataFlow", "AppScale", "NetSphere",
+  { label: "Founded", value: 2024, suffix: "" },
 ];
 
 const AnimatedCounter = ({ value, suffix }: { value: number; suffix: string }) => {
@@ -274,17 +271,17 @@ const HeroSection = () => {
           <p className="text-xs uppercase tracking-[0.2em] text-primary-foreground/30 font-medium mb-6">
             Trusted by innovative companies
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
-            {clientLogos.map((name, i) => (
-              <motion.span
-                key={name}
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+            {clientData.slice(0, 6).map((client, i) => (
+              <motion.div
+                key={client.name}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4, delay: 1.3 + i * 0.1 }}
-                className="text-sm sm:text-base font-bold text-primary-foreground/20 tracking-wider uppercase hover:text-primary-foreground/40 transition-colors duration-300 cursor-default"
+                className="h-8 sm:h-10 opacity-30 hover:opacity-60 transition-opacity duration-300 cursor-default"
               >
-                {name}
-              </motion.span>
+                <img src={client.logo} alt={client.name} className="h-full w-auto object-contain brightness-0 invert" />
+              </motion.div>
             ))}
           </div>
         </motion.div>
