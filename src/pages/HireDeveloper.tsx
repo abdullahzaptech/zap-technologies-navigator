@@ -145,8 +145,8 @@ const HireDeveloper = () => {
             <Button variant="cta" size="lg" className="rounded-full px-8" onClick={() => document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" })}>
               Hire Now <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
-            <Button variant="outline" size="lg" className="rounded-full px-8 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
-              View Our Work
+            <Button variant="outline" size="lg" className="rounded-full px-8 bg-primary-foreground text-nav font-semibold border-none hover:bg-primary-foreground/90" asChild>
+              <a href="/portfolio">View Our Work</a>
             </Button>
           </motion.div>
         </div>
