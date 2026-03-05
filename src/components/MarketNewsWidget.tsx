@@ -48,13 +48,6 @@ const fetchMarketData = async (city: string): Promise<MarketData> => {
     params.set("lon", "-74.0060");
   }
 
-  const { data, error } = await supabase.functions.invoke("market-news-weather", {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    body: undefined,
-  });
-
-  // supabase.functions.invoke doesn't support query params, so use fetch directly
   const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
   const url = `https://${projectId}.supabase.co/functions/v1/market-news-weather?${params.toString()}`;
   const res = await fetch(url, {
