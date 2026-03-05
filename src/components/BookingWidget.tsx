@@ -19,13 +19,6 @@ const BookingWidget = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedMeetingType, setSelectedMeetingType] = useState<string | null>(null);
-
-  // Auto-select first meeting type
-  useEffect(() => {
-    if (meetingTypes.length > 0 && !selectedMeetingType) {
-      setSelectedMeetingType(meetingTypes[0].id);
-    }
-  }, [meetingTypes, selectedMeetingType]);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
   const queryClient = useQueryClient();
 
