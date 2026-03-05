@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, FileText, MessageSquare,
-  Link2, Layout, Shield, CalendarClock
+  Link2, Layout, Shield, CalendarClock, Layers
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLocation } from 'react-router-dom';
@@ -14,7 +14,7 @@ import zapLogo from '@/assets/zap-logo.png';
 const menuItems = [
   { title: 'Dashboard', url: '/admin/dashboard', icon: LayoutDashboard },
   { title: 'Blog', url: '/admin/blog', icon: FileText },
-  
+  { title: 'Landing Pages', url: '/admin/landing-pages', icon: Layers },
   { title: 'Queries', url: '/admin/queries', icon: MessageSquare },
   { title: 'Links', url: '/admin/links', icon: Link2 },
   { title: 'Content', url: '/admin/content', icon: Layout },

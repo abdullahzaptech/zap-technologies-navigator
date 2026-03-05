@@ -217,6 +217,156 @@ export type Database = {
         }
         Relationships: []
       }
+      landing_page_form_fields: {
+        Row: {
+          field_label: string
+          field_type: Database["public"]["Enums"]["form_field_type"]
+          id: string
+          is_required: boolean
+          landing_page_id: string
+          options: Json | null
+          sort_order: number | null
+        }
+        Insert: {
+          field_label: string
+          field_type?: Database["public"]["Enums"]["form_field_type"]
+          id?: string
+          is_required?: boolean
+          landing_page_id: string
+          options?: Json | null
+          sort_order?: number | null
+        }
+        Update: {
+          field_label?: string
+          field_type?: Database["public"]["Enums"]["form_field_type"]
+          id?: string
+          is_required?: boolean
+          landing_page_id?: string
+          options?: Json | null
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "landing_page_form_fields_landing_page_id_fkey"
+            columns: ["landing_page_id"]
+            isOneToOne: false
+            referencedRelation: "landing_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      landing_page_sections: {
+        Row: {
+          content: Json | null
+          created_at: string
+          id: string
+          landing_page_id: string
+          section_type: Database["public"]["Enums"]["section_type"]
+          sort_order: number | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          id?: string
+          landing_page_id: string
+          section_type?: Database["public"]["Enums"]["section_type"]
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          id?: string
+          landing_page_id?: string
+          section_type?: Database["public"]["Enums"]["section_type"]
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "landing_page_sections_landing_page_id_fkey"
+            columns: ["landing_page_id"]
+            isOneToOne: false
+            referencedRelation: "landing_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      landing_page_submissions: {
+        Row: {
+          attachment_urls: Json | null
+          created_at: string
+          form_data: Json
+          id: string
+          landing_page_id: string
+        }
+        Insert: {
+          attachment_urls?: Json | null
+          created_at?: string
+          form_data?: Json
+          id?: string
+          landing_page_id: string
+        }
+        Update: {
+          attachment_urls?: Json | null
+          created_at?: string
+          form_data?: Json
+          id?: string
+          landing_page_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "landing_page_submissions_landing_page_id_fkey"
+            columns: ["landing_page_id"]
+            isOneToOne: false
+            referencedRelation: "landing_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      landing_pages: {
+        Row: {
+          created_at: string
+          id: string
+          is_visible: boolean
+          meta_description: string | null
+          meta_title: string | null
+          page_type: Database["public"]["Enums"]["landing_page_type"]
+          slug: string
+          sort_order: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          meta_description?: string | null
+          meta_title?: string | null
+          page_type?: Database["public"]["Enums"]["landing_page_type"]
+          slug: string
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          meta_description?: string | null
+          meta_title?: string | null
+          page_type?: Database["public"]["Enums"]["landing_page_type"]
+          slug?: string
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       managed_links: {
         Row: {
           category: Database["public"]["Enums"]["link_category"]
@@ -382,8 +532,17 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      form_field_type:
+        | "text"
+        | "email"
+        | "phone"
+        | "textarea"
+        | "select"
+        | "file"
+      landing_page_type: "job" | "services" | "course_request" | "custom"
       link_category: "header" | "footer" | "external"
       query_status: "new" | "read" | "resolved"
+      section_type: "heading" | "text" | "image" | "rich_text"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -512,8 +671,11 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      form_field_type: ["text", "email", "phone", "textarea", "select", "file"],
+      landing_page_type: ["job", "services", "course_request", "custom"],
       link_category: ["header", "footer", "external"],
       query_status: ["new", "read", "resolved"],
+      section_type: ["heading", "text", "image", "rich_text"],
     },
   },
 } as const
