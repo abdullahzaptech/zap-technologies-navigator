@@ -12,9 +12,9 @@ import { useToast } from "@/hooks/use-toast";
 
 /* ─── Fallback static data (used when DB is empty) ─── */
 const fallbackWebPackages = [
-  { name: "Basic", description: "Perfect for small businesses and startups", price: "$2,500", delivery_time: "2–4 weeks", features: ["Simple 5-page website", "Responsive design", "Basic SEO setup", "Hosting setup", "Contact form", "1 round of revisions"], sort_order: 0 },
-  { name: "Standard", description: "For businesses looking to expand online", price: "$5,000 – $8,000", delivery_time: "4–6 weeks", features: ["Custom website design", "Up to 10 pages", "Advanced SEO", "CMS integration", "E-commerce setup", "Analytics dashboard", "3 rounds of revisions"], sort_order: 1 },
-  { name: "Premium", description: "Complex functionality and features", price: "$10,000 – $20,000", delivery_time: "6–8 weeks", features: ["Full custom development", "Up to 20+ pages", "Advanced integrations", "Full e-commerce", "Performance optimization", "Ongoing support (3 months)", "Unlimited revisions"], sort_order: 2 },
+  { name: "Starter", description: "Best for small businesses & personal websites", price: "From $100", delivery_time: "3–5 days", features: ["1–3 page website", "Responsive design (mobile friendly)", "Basic contact form", "Basic SEO setup", "Speed optimization (basic)", "1 revision"], sort_order: 0 },
+  { name: "Business", description: "For startups and growing businesses", price: "$300 – $600", delivery_time: "5–10 days", features: ["Up to 7 pages", "Custom design layout", "Mobile & tablet responsive", "On-page SEO optimization", "Blog / CMS setup", "Basic analytics integration", "Speed optimization", "3 revisions"], sort_order: 1 },
+  { name: "Professional", description: "For companies and full online presence", price: "$900 – $1,500", delivery_time: "10–20 days", features: ["Up to 15 pages", "Full custom UI/UX design", "Advanced SEO structure", "E-commerce integration", "Payment gateway setup", "Performance optimization", "Security setup", "Analytics & tracking", "Unlimited revisions"], sort_order: 2 },
 ];
 
 const fallbackMobilePackages = [
