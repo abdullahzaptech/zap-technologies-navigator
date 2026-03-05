@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CalendarClock, X, ChevronRight, ChevronLeft, Check, Clock, User, Mail, Phone, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ const BookingWidget = () => {
   const [selectedMeetingType, setSelectedMeetingType] = useState<string | null>(null);
 
   // Auto-select first meeting type
-  React.useEffect(() => {
+  useEffect(() => {
     if (meetingTypes.length > 0 && !selectedMeetingType) {
       setSelectedMeetingType(meetingTypes[0].id);
     }
