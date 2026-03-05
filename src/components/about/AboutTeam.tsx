@@ -6,6 +6,7 @@ import teamAbdullah from "@/assets/team-abdullah.png";
 import teamMinhaj from "@/assets/team-minhaj.png";
 import teamNadir from "@/assets/team-nadir.png";
 import teamKamran from "@/assets/team-kamran.png";
+import teamFarhan from "@/assets/team-farhan.png";
 
 const team = [
   {
@@ -18,7 +19,7 @@ const team = [
   },
   {
     name: "Syed Minhaj Haider Shah",
-    role: "Senior Web Developer",
+    role: "Co-Founder & Senior Web Developer",
     initials: "SM",
     photo: teamMinhaj,
     bio: "Minhaj specializes in full-stack development, building responsive and scalable web applications with a passion for clean code and user-friendly design. With expertise in modern frameworks and cloud architecture, he ensures every project meets the highest technical standards.",
@@ -38,6 +39,14 @@ const team = [
     initials: "MK",
     photo: teamKamran,
     bio: "Kamran drives brand growth and digital marketing strategies at Zap Technologies. With a sharp eye for market trends and consumer behavior, he crafts compelling campaigns that connect audiences with our innovative solutions.",
+    socials: { linkedin: "#" },
+  },
+  {
+    name: "Muhammad Farhan",
+    role: "AI Product Expert & Laravel Developer",
+    initials: "MF",
+    photo: teamFarhan,
+    bio: "Farhan combines AI expertise with Laravel development to build intelligent, scalable web solutions. With a deep understanding of machine learning and modern PHP frameworks, he bridges the gap between cutting-edge AI and robust backend systems.",
     socials: { linkedin: "#" },
   },
 ];
