@@ -1,6 +1,6 @@
 import { SearchCheck, PenLine, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
-import aboutPerson from "@/assets/about-person.png";
+import teamAbdullah from "@/assets/team-abdullah.png";
 
 const features = [
   {
@@ -39,9 +39,9 @@ const AboutSection = () => {
             <div className="relative">
               <div className="w-[340px] h-[420px] sm:w-[400px] sm:h-[500px] rounded-full overflow-hidden flex items-end justify-center border-4 border-primary/30 bg-gradient-to-b from-primary/20 via-primary/10 to-primary/5">
                 <img
-                  src={aboutPerson}
-                  alt="Zap Technologies team member"
-                  className="w-full h-full object-cover object-top mix-blend-multiply"
+                  src={teamAbdullah}
+                  alt="Abdullah Munaim - CEO & Founder, Zap Technologies"
+                  className="w-full h-full object-cover object-top"
                 />
               </div>
             </div>
