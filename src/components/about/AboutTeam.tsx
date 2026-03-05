@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import teamAbdullah from "@/assets/team-abdullah.png";
 import teamMinhaj from "@/assets/team-minhaj.png";
 import teamNadir from "@/assets/team-nadir.png";
+import teamKamran from "@/assets/team-kamran.png";
 
 const team = [
   {
