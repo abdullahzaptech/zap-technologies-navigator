@@ -1,16 +1,16 @@
 import { motion } from "framer-motion";
-import { Award, Star, BadgeCheck, Quote } from "lucide-react";
+import { Award, Star, BadgeCheck, Quote, Users, Rocket } from "lucide-react";
 
 const achievements = [
-  { icon: Award, title: "Best Tech Start-Up 2020", description: "Recognized for innovation and excellence in technology solutions." },
-  { icon: BadgeCheck, title: "Google Developer Partner", description: "Certified as a Professional Developer Partner by Google." },
-  { icon: Star, title: "100+ Projects Delivered", description: "Successfully completed projects across web, mobile, and AI." },
-  { icon: Award, title: "Best Tech Solutions 2024", description: "Awarded 'Best Tech Solutions Provider' by TechReview." },
+  { icon: Rocket, title: "Founded in 2024", description: "Started with a mission to deliver high-quality digital solutions for growing businesses." },
+  { icon: Star, title: "80+ Projects Delivered", description: "Successfully completed projects across web development, mobile apps, SEO, and AI solutions." },
+  { icon: Users, title: "6+ Team Members", description: "A growing team of skilled developers, designers, and marketing experts working together." },
+  { icon: BadgeCheck, title: "Client Satisfaction", description: "Consistently rated 5 stars by clients for quality, communication, and timely delivery." },
 ];
 
 const testimonials = [
-  { quote: "Zap Technologies transformed our digital presence entirely. Their team delivered a stunning platform that boosted conversions by 40%.", name: "Sarah Mitchell", role: "CEO, TechCorp" },
-  { quote: "Working with Zap was seamless. Their AI-powered solution automated our workflows and saved us hundreds of hours.", name: "James Anderson", role: "CTO, InnovateCo" },
+  { quote: "Zap Technologies built us a professional website that truly represents our brand. Their team was responsive and delivered on time.", name: "Ahmed Raza", role: "Founder, Raza Enterprises" },
+  { quote: "The SEO and Meta Ads campaigns by Zap helped us double our online leads within just two months. Highly recommended!", name: "Usman Ali", role: "Owner, Ali Digital Store" },
 ];
 
 const AboutAchievements = () => {
