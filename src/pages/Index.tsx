@@ -8,6 +8,7 @@ import WhyChooseUsSection from "@/components/WhyChooseUsSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 
+
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">

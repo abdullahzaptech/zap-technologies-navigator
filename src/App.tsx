@@ -26,6 +26,7 @@ import AdminSecurity from "./pages/AdminSecurity";
 import AdminBookings from "./pages/AdminBookings";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import BookingWidget from "./components/BookingWidget";
+import WhatsAppButton from "./components/WhatsAppButton";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <BookingWidget />
+          <WhatsAppButton />
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
