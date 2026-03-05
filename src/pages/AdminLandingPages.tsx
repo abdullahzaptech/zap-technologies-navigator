@@ -28,13 +28,13 @@ type LandingPage = {
 
 type Section = {
   id: string; landing_page_id: string; section_type: 'heading' | 'text' | 'image' | 'rich_text';
-  title: string | null; content: Record<string, unknown> | null; sort_order: number | null;
+  title: string | null; content: Record<string, string> | null; sort_order: number | null;
 };
 
 type FormField = {
   id: string; landing_page_id: string; field_label: string;
   field_type: 'text' | 'email' | 'phone' | 'textarea' | 'select' | 'file';
-  is_required: boolean; options: unknown[] | null; sort_order: number | null;
+  is_required: boolean; options: string[] | null; sort_order: number | null;
 };
 
 type Submission = {
@@ -66,7 +66,7 @@ const FIELD_TYPES = [
 ] as const;
 
 const defaultPageForm = {
-  title: '', slug: '', page_type: 'custom' as const,
+  title: '', slug: '', page_type: 'custom' as LandingPage['page_type'],
   is_visible: false, meta_title: '', meta_description: '',
 };
 
@@ -171,7 +171,7 @@ const AdminLandingPages = () => {
           landing_page_id: pageId!,
           section_type: s.section_type as Section['section_type'],
           title: s.title || null,
-          content: s.content || {},
+          content: (s.content || {}) as Record<string, string>,
           sort_order: i,
         }));
         const { error } = await supabase.from('landing_page_sections').insert(sectionPayload);
@@ -188,7 +188,7 @@ const AdminLandingPages = () => {
           field_label: f.field_label,
           field_type: f.field_type as FormField['field_type'],
           is_required: f.is_required,
-          options: f.options || [],
+          options: (f.options || []) as string[],
           sort_order: i,
         }));
         const { error } = await supabase.from('landing_page_form_fields').insert(fieldPayload);
