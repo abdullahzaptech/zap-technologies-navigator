@@ -30,7 +30,7 @@ import AdminBookings from "./pages/AdminBookings";
 import LandingPage from "./pages/LandingPage";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import BookingWidget from "./components/BookingWidget";
-import WhatsAppButton from "./components/WhatsAppButton";
+import MarketNewsWidget from "./components/MarketNewsWidget";
 
 const queryClient = new QueryClient();
 
@@ -73,7 +73,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <BookingWidget />
-          <WhatsAppButton />
+          <MarketNewsWidget />
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
