@@ -43,19 +43,8 @@ const BookingWidget = () => {
     }
   }, [meetingTypes, selectedMeetingType]);
 
-  // Fetch booking settings
-  const { data: settings } = useQuery({
-    queryKey: ["booking-settings"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("booking_settings")
-        .select("*")
-        .limit(1)
-        .single();
-      if (error) throw error;
-      return data;
-    },
-  });
+  // Use hardcoded 24/7 slots - no need to fetch booking settings
+  const slotInterval = 60; // 1-hour slots
 
   // Fetch existing bookings for selected date
   const { data: existingBookings = [] } = useQuery({
