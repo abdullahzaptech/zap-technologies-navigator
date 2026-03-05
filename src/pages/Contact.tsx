@@ -24,10 +24,10 @@ import { Loader2 } from "lucide-react";
 
 /* ─── Data ─── */
 const contactInfo = [
-  { icon: Mail, label: "Email", value: "info@zaptechnologies.com", href: "mailto:info@zaptechnologies.com" },
-  { icon: Phone, label: "Phone", value: "+1 (555) 123-4567", href: "tel:+15551234567" },
-  { icon: MapPin, label: "Address", value: "123 Innovation Drive, San Francisco, CA 94105", href: null },
-  { icon: Clock, label: "Hours", value: "Mon – Fri: 9 AM – 6 PM PST", href: null },
+  { icon: Mail, label: "Email", value: "zaptechnologies.online@gmail.com", href: "mailto:zaptechnologies.online@gmail.com" },
+  { icon: Phone, label: "Phone", value: "+92 3014174921", href: "tel:+923014174921" },
+  { icon: MapPin, label: "Address", value: "Multan, Pakistan", href: null },
+  { icon: Clock, label: "Hours", value: "Mon – Fri: 9 AM – 6 PM PKT", href: null },
 ];
 
 const socialLinks = [
