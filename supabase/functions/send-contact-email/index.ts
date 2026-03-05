@@ -18,22 +18,22 @@ function escapeHtml(str: string) {
 function buildEmailHtml({
   name, email, phone, inquiryType, budget, timeline, message, projectLink, attachmentUrl,
 }: Record<string, string | null | undefined>) {
-  const rows: { label: string; value: string; icon: string }[] = [];
-  rows.push({ label: "Name", value: name || "—", icon: "👤" });
-  rows.push({ label: "Email", value: `<a href="mailto:${escapeHtml(email || "")}" style="color:#2563eb;text-decoration:none;">${escapeHtml(email || "—")}</a>`, icon: "📧" });
-  if (phone) rows.push({ label: "Phone", value: escapeHtml(phone), icon: "📱" });
-  if (inquiryType) rows.push({ label: "Inquiry Type", value: escapeHtml(inquiryType), icon: "📋" });
-  if (budget) rows.push({ label: "Budget", value: escapeHtml(budget), icon: "💰" });
-  if (timeline) rows.push({ label: "Timeline", value: escapeHtml(timeline), icon: "⏱️" });
+  const rows: { label: string; value: string }[] = [];
+  rows.push({ label: "Name", value: escapeHtml(name || "—") });
+  rows.push({ label: "Email", value: `<a href="mailto:${escapeHtml(email || "")}" style="color:#2563eb;text-decoration:none;">${escapeHtml(email || "—")}</a>` });
+  if (phone) rows.push({ label: "Phone", value: escapeHtml(phone) });
+  if (inquiryType) rows.push({ label: "Inquiry Type", value: escapeHtml(inquiryType) });
+  if (budget) rows.push({ label: "Budget", value: escapeHtml(budget) });
+  if (timeline) rows.push({ label: "Timeline", value: escapeHtml(timeline) });
 
   const tableRows = rows
     .map(
       (r, i) =>
-        `<tr style="background:${i % 2 === 0 ? "#f8fafc" : "#ffffff"};">
-          <td style="padding:14px 16px;font-size:13px;color:#64748b;font-weight:600;white-space:nowrap;border-bottom:1px solid #f1f5f9;">
-            ${r.icon} ${r.label}
+        `<tr>
+          <td style="padding:12px 16px;font-size:13px;color:#64748b;font-weight:600;white-space:nowrap;border-bottom:1px solid #e2e8f0;background:${i % 2 === 0 ? "#f8fafc" : "#ffffff"};">
+            ${r.label}
           </td>
-          <td style="padding:14px 16px;font-size:14px;color:#1e293b;border-bottom:1px solid #f1f5f9;">
+          <td style="padding:12px 16px;font-size:14px;color:#1e293b;border-bottom:1px solid #e2e8f0;background:${i % 2 === 0 ? "#f8fafc" : "#ffffff"};">
             ${r.value}
           </td>
         </tr>`
@@ -41,94 +41,102 @@ function buildEmailHtml({
     .join("");
 
   const attachmentSection = attachmentUrl
-    ? `<div style="margin-top:20px;padding:16px;background:linear-gradient(135deg,#eff6ff,#f0f9ff);border-radius:12px;border:1px solid #bfdbfe;">
-        <table cellpadding="0" cellspacing="0" border="0"><tr>
-          <td style="padding-right:12px;">📎</td>
-          <td>
-            <span style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Attached File</span><br/>
-            <a href="${escapeHtml(attachmentUrl)}" style="color:#2563eb;text-decoration:none;font-size:14px;font-weight:500;">View / Download Attachment →</a>
+    ? `<tr><td colspan="2" style="padding:16px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px 16px;">
+            <a href="${escapeHtml(attachmentUrl)}" style="color:#2563eb;text-decoration:none;font-size:14px;font-weight:500;">📎 View / Download Attachment</a>
           </td>
         </tr></table>
-      </div>`
+      </td></tr>`
     : "";
 
   const linkSection = projectLink
-    ? `<div style="margin-top:12px;padding:16px;background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border-radius:12px;border:1px solid #bbf7d0;">
-        <table cellpadding="0" cellspacing="0" border="0"><tr>
-          <td style="padding-right:12px;">🔗</td>
-          <td>
-            <span style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Project Link</span><br/>
-            <a href="${escapeHtml(projectLink)}" style="color:#16a34a;text-decoration:none;font-size:14px;font-weight:500;">${escapeHtml(projectLink.length > 60 ? projectLink.substring(0, 60) + "..." : projectLink)} →</a>
+    ? `<tr><td colspan="2" style="padding:0 16px 16px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;">
+            <a href="${escapeHtml(projectLink)}" style="color:#16a34a;text-decoration:none;font-size:14px;font-weight:500;">🔗 ${escapeHtml(projectLink.length > 60 ? projectLink.substring(0, 60) + "..." : projectLink)}</a>
           </td>
         </tr></table>
-      </div>`
+      </td></tr>`
     : "";
 
-  return `
-<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/></head>
-<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
-  <div style="max-width:640px;margin:0 auto;padding:32px 16px;">
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f1f5f9;">
+<tr><td align="center" style="padding:32px 16px;">
+<table width="640" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;width:100%;">
 
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 50%,#3b82f6 100%);border-radius:16px 16px 0 0;padding:40px 32px;text-align:center;">
-      <div style="display:inline-block;background:rgba(255,255,255,0.15);border-radius:12px;padding:12px 16px;margin-bottom:16px;">
-        <span style="font-size:28px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">⚡ ZAP</span>
-      </div>
-      <h1 style="margin:12px 0 0;font-size:24px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">
-        New Contact Submission
-      </h1>
-      <p style="margin:8px 0 0;font-size:14px;color:rgba(255,255,255,0.75);">
-        Someone reached out via your website
-      </p>
-    </div>
+  <!-- Header -->
+  <tr>
+    <td style="background-color:#1e3a8a;padding:40px 32px;text-align:center;border-radius:16px 16px 0 0;">
+      <table cellpadding="0" cellspacing="0" border="0" align="center">
+        <tr><td style="background-color:rgba(255,255,255,0.15);border-radius:12px;padding:10px 16px;">
+          <span style="font-size:26px;font-weight:800;color:#ffffff;">⚡ ZAP</span>
+        </td></tr>
+      </table>
+      <h1 style="margin:16px 0 0;font-size:22px;font-weight:700;color:#ffffff;">New Contact Submission</h1>
+      <p style="margin:8px 0 0;font-size:14px;color:#bfdbfe;">Someone reached out via your website</p>
+    </td>
+  </tr>
 
-    <!-- Inquiry Badge -->
-    <div style="background:#ffffff;padding:20px 32px 0;text-align:center;">
-      <div style="display:inline-block;background:linear-gradient(135deg,#dbeafe,#ede9fe);padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;color:#4338ca;text-transform:uppercase;letter-spacing:0.8px;">
-        ${escapeHtml(inquiryType || "General Inquiry")}
-      </div>
-    </div>
+  <!-- Inquiry Badge -->
+  <tr>
+    <td style="background-color:#ffffff;padding:20px 32px 8px;text-align:center;">
+      <table cellpadding="0" cellspacing="0" border="0" align="center">
+        <tr><td style="background-color:#dbeafe;padding:6px 18px;border-radius:20px;font-size:12px;font-weight:700;color:#4338ca;text-transform:uppercase;letter-spacing:0.8px;">
+          ${escapeHtml(inquiryType || "General Inquiry")}
+        </td></tr>
+      </table>
+    </td>
+  </tr>
 
-    <!-- Details Table -->
-    <div style="background:#ffffff;padding:24px 32px;">
-      <table cellpadding="0" cellspacing="0" border="0" style="width:100%;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;">
+  <!-- Details -->
+  <tr>
+    <td style="background-color:#ffffff;padding:16px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e2e8f0;border-radius:8px;">
         ${tableRows}
       </table>
-    </div>
+    </td>
+  </tr>
 
-    <!-- Message -->
-    <div style="background:#ffffff;padding:0 32px 24px;">
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px 24px;">
-        <div style="font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;">
-          💬 Message
-        </div>
-        <div style="font-size:14px;color:#334155;line-height:1.7;white-space:pre-wrap;">${escapeHtml(message || "")}</div>
-      </div>
-      ${attachmentSection}
-      ${linkSection}
-    </div>
+  <!-- Message -->
+  <tr>
+    <td style="background-color:#ffffff;padding:0 32px 16px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr><td style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px 24px;">
+          <p style="margin:0 0 10px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.8px;">Message</p>
+          <p style="margin:0;font-size:14px;color:#334155;line-height:1.7;white-space:pre-wrap;">${escapeHtml(message || "")}</p>
+        </td></tr>
+        ${attachmentSection}
+        ${linkSection}
+      </table>
+    </td>
+  </tr>
 
-    <!-- Action Button -->
-    <div style="background:#ffffff;padding:0 32px 32px;text-align:center;">
-      <a href="mailto:${escapeHtml(email || "")}" style="display:inline-block;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#ffffff;padding:14px 40px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;letter-spacing:0.3px;">
-        Reply to ${escapeHtml((name || "").split(" ")[0])} →
-      </a>
-    </div>
+  <!-- Reply Button -->
+  <tr>
+    <td style="background-color:#ffffff;padding:8px 32px 32px;text-align:center;">
+      <table cellpadding="0" cellspacing="0" border="0" align="center">
+        <tr><td style="background-color:#2563eb;border-radius:8px;padding:14px 40px;">
+          <a href="mailto:${escapeHtml(email || "")}" style="color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;">Reply to ${escapeHtml((name || "").split(" ")[0])} →</a>
+        </td></tr>
+      </table>
+    </td>
+  </tr>
 
-    <!-- Footer -->
-    <div style="background:#f8fafc;border-radius:0 0 16px 16px;border-top:1px solid #e2e8f0;padding:24px 32px;text-align:center;">
-      <p style="margin:0;font-size:12px;color:#94a3b8;">
-        This email was automatically sent from the<br/>
-        <strong style="color:#475569;">Zap Technologies</strong> contact form
-      </p>
-      <p style="margin:8px 0 0;font-size:11px;color:#cbd5e1;">
-        ${new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-      </p>
-    </div>
+  <!-- Footer -->
+  <tr>
+    <td style="background-color:#f8fafc;border-top:1px solid #e2e8f0;border-radius:0 0 16px 16px;padding:24px 32px;text-align:center;">
+      <p style="margin:0;font-size:12px;color:#94a3b8;">This email was sent from the <strong style="color:#475569;">Zap Technologies</strong> website</p>
+      <p style="margin:8px 0 0;font-size:11px;color:#cbd5e1;">${new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
+    </td>
+  </tr>
 
-  </div>
+</table>
+</td></tr>
+</table>
 </body>
 </html>`;
 }
