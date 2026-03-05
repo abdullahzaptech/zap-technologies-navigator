@@ -195,6 +195,15 @@ const Pricing = () => {
                     <h3 className="text-xl font-bold text-foreground mb-1">{pkg.name}</h3>
                     <p className="text-2xl font-bold text-primary mb-3">{pkg.price}</p>
                     <p className="text-sm text-muted-foreground mb-6">{pkg.desc}</p>
+                    {pkg.features.length > 0 && (
+                      <ul className="space-y-3 mb-6">
+                        {pkg.features.map((f) => (
+                          <li key={f} className="flex items-start gap-2 text-sm text-foreground/80">
+                            <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" /> {f}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                     <Button variant="outline" className="rounded-full w-full" asChild><a href="/contact">Inquire Now</a></Button>
                   </motion.div>
                 ))}
