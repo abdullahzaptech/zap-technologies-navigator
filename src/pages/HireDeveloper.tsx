@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Code2, Smartphone, Layout, Server, Palette, Users, Target, Trophy,
   Clock, Zap, ChevronRight, Star, Quote, CheckCircle2, Send,
-  ChevronLeft, ChevronRight as ChevronRightIcon
+  ChevronLeft, ChevronRight as ChevronRightIcon, Paperclip, Link, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,9 +39,9 @@ const steps = [
 ];
 
 const pricingModels = [
-  { title: "Hourly Rate", desc: "Hire our developers on an hourly basis for smaller projects or ongoing support.", cta: "Get Hourly Quote", highlight: false },
-  { title: "Full-Time Developer", desc: "Hire a dedicated full-time developer committed to your project for maximum productivity.", cta: "Hire Full-Time", highlight: true },
-  { title: "Project-Based", desc: "Need a one-time project? Our developers can be hired on a fixed-price contract.", cta: "Get Project Quote", highlight: false },
+  { title: "Hourly Rate", price: "From $12/hr", desc: "Hire our developers on an hourly basis for smaller projects or ongoing support.", cta: "Get Hourly Quote", highlight: false },
+  { title: "Full-Time Developer", price: "From $400/mo", desc: "Hire a dedicated full-time developer committed to your project for maximum productivity.", cta: "Hire Full-Time", highlight: true },
+  { title: "Project-Based", price: "From $100", desc: "Need a one-time project? Our developers can be hired on a fixed-price contract.", cta: "Get Project Quote", highlight: false },
 ];
 
 const testimonials = [
@@ -54,7 +54,9 @@ const testimonials = [
 const HireDeveloper = () => {
   const { toast } = useToast();
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
-  const [formData, setFormData] = useState({ name: "", email: "", phone: "", description: "", budget: "", role: "", timeline: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", description: "", budget: "", role: "", timeline: "", projectLink: "" });
+  const [attachment, setAttachment] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -67,19 +69,35 @@ const HireDeveloper = () => {
 
     setSubmitting(true);
     try {
-      // Save to database
+      // Upload attachment if present
+      let attachmentUrl: string | null = null;
+      if (attachment) {
+        if (attachment.size > 10 * 1024 * 1024) {
+          toast({ title: "File too large", description: "Maximum file size is 10MB.", variant: "destructive" });
+          setSubmitting(false);
+          return;
+        }
+        const fileExt = attachment.name.split('.').pop();
+        const filePath = `hire/${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage.from('form-attachments').upload(filePath, attachment);
+        if (uploadError) throw uploadError;
+        const { data: urlData } = supabase.storage.from('form-attachments').getPublicUrl(filePath);
+        attachmentUrl = urlData.publicUrl;
+      }
+
       const subject = `Hire Developer — ${formData.role || "General"} | Budget: ${formData.budget || "Not specified"}`;
-      const message = `Project Description:\n${formData.description}\n\nPreferred Role: ${formData.role || "Not specified"}\nBudget: ${formData.budget || "Not specified"}\nTimeline: ${formData.timeline || "Not specified"}\nPhone: ${formData.phone || "Not provided"}`;
+      const message = `Project Description:\n${formData.description}\n\nPreferred Role: ${formData.role || "Not specified"}\nBudget: ${formData.budget || "Not specified"}\nTimeline: ${formData.timeline || "Not specified"}\nPhone: ${formData.phone || "Not provided"}\nProject Link: ${formData.projectLink || "Not provided"}`;
 
       const { error: dbError } = await supabase.from("form_queries").insert({
         name: formData.name.trim(),
         email: formData.email.trim(),
         subject,
         message,
+        project_link: formData.projectLink.trim() || null,
+        attachment_url: attachmentUrl,
       });
       if (dbError) throw dbError;
 
-      // Send email notification
       await supabase.functions.invoke("send-contact-email", {
         body: {
           name: formData.name,
@@ -89,11 +107,14 @@ const HireDeveloper = () => {
           budget: formData.budget || null,
           timeline: formData.timeline || null,
           message: formData.description,
+          projectLink: formData.projectLink || null,
+          attachmentUrl,
         },
       });
 
       toast({ title: "Project details submitted!", description: "We'll get back to you within 24 hours." });
-      setFormData({ name: "", email: "", phone: "", description: "", budget: "", role: "", timeline: "" });
+      setFormData({ name: "", email: "", phone: "", description: "", budget: "", role: "", timeline: "", projectLink: "" });
+      setAttachment(null);
     } catch (err: any) {
       console.error("Submit error:", err);
       toast({ title: "Something went wrong", description: "Please try again or contact us directly.", variant: "destructive" });
