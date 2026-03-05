@@ -227,7 +227,7 @@ const AdminQueries = () => {
 
         {/* View Query Dialog */}
         <Dialog open={!!selectedQuery} onOpenChange={(open) => { if (!open) setSelectedQuery(null); }}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[550px] max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Query from {selectedQuery?.name}</DialogTitle>
             </DialogHeader>
