@@ -59,6 +59,14 @@ const team = [
     bio: "Abdul Rehman drives organic growth and paid advertising strategies at Zap Technologies. With expertise in SEO optimization and Meta Ads campaigns, he helps businesses maximize their online visibility and achieve measurable results.",
     socials: { linkedin: "#" },
   },
+  {
+    name: "Muhammad Hasnain",
+    role: "Mobile App Developer & Flutter Dev",
+    initials: "MH",
+    photo: teamHasnain,
+    bio: "Hasnain specializes in cross-platform mobile app development using Flutter and Dart. With a keen eye for smooth UI/UX and performance optimization, he builds beautiful, high-performance mobile applications for both iOS and Android platforms.",
+    socials: { linkedin: "#" },
+  },
 ];
 
 const BIO_LIMIT = 120;
