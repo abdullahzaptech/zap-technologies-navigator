@@ -68,6 +68,14 @@ const team = [
     bio: "Hasnain specializes in cross-platform mobile app development using Flutter and Dart. With a keen eye for smooth UI/UX and performance optimization, he builds beautiful, high-performance mobile applications for both iOS and Android platforms.",
     socials: { linkedin: "#" },
   },
+  {
+    name: "Muhammad Salman",
+    role: "Front End Developer",
+    initials: "MS",
+    photo: teamSalman,
+    bio: "Salman is a skilled front-end developer with expertise in modern JavaScript frameworks and responsive design. He transforms creative designs into pixel-perfect, interactive web experiences with clean, maintainable code and attention to detail.",
+    socials: { linkedin: "#" },
+  },
 ];
 
 const BIO_LIMIT = 120;
