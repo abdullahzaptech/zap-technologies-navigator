@@ -8,6 +8,7 @@ import teamNadir from "@/assets/team-nadir.png";
 import teamKamran from "@/assets/team-kamran.png";
 import teamFarhan from "@/assets/team-farhan.png";
 import teamAbdulRehman from "@/assets/team-abdulrehman.png";
+import teamHasnain from "@/assets/team-hasnain.png";
 
 const team = [
   {
