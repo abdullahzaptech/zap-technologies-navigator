@@ -12,6 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, Upload, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import ResourceDownloadSection from '@/components/landing/ResourceDownloadSection';
+import FAQSection from '@/components/landing/FAQSection';
+import SocialShareButtons from '@/components/landing/SocialShareButtons';
 
 type LandingPage = {
   id: string; title: string; slug: string; page_type: string;
@@ -68,7 +71,6 @@ const LandingPage = () => {
     },
   });
 
-  // Set SEO meta tags
   useEffect(() => {
     if (page) {
       document.title = page.meta_title || page.title;
@@ -81,7 +83,6 @@ const LandingPage = () => {
 
   const submitMutation = useMutation({
     mutationFn: async () => {
-      // Upload files
       const attachmentUrls: string[] = [];
       for (const [label, file] of Object.entries(files)) {
         const ext = file.name.split('.').pop();
@@ -93,7 +94,6 @@ const LandingPage = () => {
         formData[label] = urlData.publicUrl;
       }
 
-      // Save submission
       const { error } = await supabase.from('landing_page_submissions').insert({
         landing_page_id: page!.id,
         form_data: formData,
@@ -101,17 +101,14 @@ const LandingPage = () => {
       });
       if (error) throw error;
 
-      // Send email notification
       try {
         const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
         await fetch(`https://${projectId}.supabase.co/functions/v1/send-landing-submission-email`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            pageTitle: page!.title,
-            pageType: page!.page_type,
-            formData,
-            attachmentUrls,
+            pageTitle: page!.title, pageType: page!.page_type,
+            formData, attachmentUrls,
           }),
         });
       } catch (e) {
@@ -127,7 +124,6 @@ const LandingPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Validate required fields
     for (const field of formFields) {
       if (field.is_required && field.field_type !== 'file' && !formData[field.field_label]?.trim()) {
         toast.error(`${field.field_label} is required`);
@@ -154,6 +150,16 @@ const LandingPage = () => {
     return null;
   }
 
+  const isResourcePage = page.page_type === 'resource';
+  const faqSections = sections.filter(s => s.section_type === 'faq');
+  const contentSections = sections.filter(s => s.section_type !== 'faq');
+
+  const ctaLabel = page.page_type === 'job' ? 'Apply Now'
+    : page.page_type === 'course_request' ? 'Request Course'
+    : page.page_type === 'services' ? 'Get in Touch'
+    : isResourcePage ? 'Get Access'
+    : 'Submit';
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -165,12 +171,17 @@ const LandingPage = () => {
             {page.meta_description && (
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{page.meta_description}</p>
             )}
+            {isResourcePage && !submitted && (
+              <Button size="lg" className="mt-6" onClick={() => document.getElementById('resource-form')?.scrollIntoView({ behavior: 'smooth' })}>
+                Get Free Resources
+              </Button>
+            )}
           </div>
         </section>
 
-        {/* Sections */}
         <div className="container mx-auto px-4 py-12 space-y-10 max-w-4xl">
-          {sections.map(section => (
+          {/* Content Sections */}
+          {contentSections.map(section => (
             <div key={section.id}>
               {section.section_type === 'heading' && (
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground">{section.title}</h2>
@@ -184,36 +195,34 @@ const LandingPage = () => {
                 <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: section.content?.body || '' }} />
               )}
               {section.section_type === 'image' && section.content?.url && (
-                <img
-                  src={section.content.url}
-                  alt={section.content.alt || ''}
-                  className="w-full rounded-xl object-cover max-h-[500px]"
-                  loading="lazy"
-                />
+                <img src={section.content.url} alt={section.content.alt || ''}
+                  className="w-full rounded-xl object-cover max-h-[500px]" loading="lazy" />
               )}
             </div>
           ))}
 
           {/* Form */}
           {formFields.length > 0 && (
-            <Card className="border-border/60 shadow-lg">
+            <Card id="resource-form" className="border-border/60 shadow-lg">
               <CardContent className="p-6 md:p-8">
                 {submitted ? (
                   <div className="text-center py-8 space-y-4">
                     <CheckCircle className="h-16 w-16 text-primary mx-auto" />
                     <h3 className="text-2xl font-bold text-foreground">Thank You!</h3>
-                    <p className="text-muted-foreground">Your submission has been received. We'll get back to you soon.</p>
-                    <Button variant="outline" onClick={() => { setSubmitted(false); setFormData({}); setFiles({}); }}>
-                      Submit Another
-                    </Button>
+                    <p className="text-muted-foreground">
+                      {isResourcePage
+                        ? 'Your access is ready! Download the resources below.'
+                        : 'Your submission has been received. We\'ll get back to you soon.'}
+                    </p>
+                    {!isResourcePage && (
+                      <Button variant="outline" onClick={() => { setSubmitted(false); setFormData({}); setFiles({}); }}>
+                        Submit Another
+                      </Button>
+                    )}
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
-                    <h3 className="text-xl font-bold text-foreground">
-                      {page.page_type === 'job' ? 'Apply Now' :
-                       page.page_type === 'course_request' ? 'Request Course' :
-                       page.page_type === 'services' ? 'Get in Touch' : 'Submit'}
-                    </h3>
+                    <h3 className="text-xl font-bold text-foreground">{ctaLabel}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {formFields.map(field => (
                         <div key={field.id} className={field.field_type === 'textarea' || field.field_type === 'file' ? 'md:col-span-2' : ''}>
@@ -261,13 +270,31 @@ const LandingPage = () => {
                     </div>
                     <Button type="submit" size="lg" className="w-full md:w-auto" disabled={submitMutation.isPending}>
                       {submitMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                      Submit
+                      {ctaLabel}
                     </Button>
                   </form>
                 )}
               </CardContent>
             </Card>
           )}
+
+          {/* Resource Downloads (shown after submission for resource pages) */}
+          {isResourcePage && submitted && page.id && (
+            <ResourceDownloadSection landingPageId={page.id} />
+          )}
+
+          {/* Social Share */}
+          {isResourcePage && (
+            <SocialShareButtons url={window.location.href} title={page.title} />
+          )}
+
+          {/* FAQ Sections */}
+          {faqSections.map(section => {
+            const items = Array.isArray((section.content as any)?.items)
+              ? (section.content as any).items as { question: string; answer: string }[]
+              : [];
+            return <FAQSection key={section.id} title={section.title || 'Frequently Asked Questions'} items={items} />;
+          })}
         </div>
       </main>
       <Footer />
