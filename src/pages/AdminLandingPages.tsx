@@ -9,26 +9,27 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import {
   Plus, Pencil, Trash2, Search, FileText, Loader2, Eye, EyeOff,
-  ArrowUp, ArrowDown, GripVertical, Download, ExternalLink, ChevronDown, ChevronUp, Upload, Image
+  ArrowUp, ArrowDown, GripVertical, Download, ExternalLink, ChevronDown, ChevronUp, Upload, Image, BarChart3
 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 type LandingPage = {
   id: string; title: string; slug: string;
-  page_type: 'job' | 'services' | 'course_request' | 'custom';
+  page_type: 'job' | 'services' | 'course_request' | 'custom' | 'resource';
   is_visible: boolean; meta_title: string | null; meta_description: string | null;
   sort_order: number | null; created_at: string; updated_at: string;
 };
 
 type Section = {
-  id: string; landing_page_id: string; section_type: 'heading' | 'text' | 'image' | 'rich_text';
-  title: string | null; content: Record<string, string> | null; sort_order: number | null;
+  id: string; landing_page_id: string; section_type: 'heading' | 'text' | 'image' | 'rich_text' | 'faq';
+  title: string | null; content: Record<string, any> | null; sort_order: number | null;
 };
 
 type FormField = {
@@ -42,10 +43,17 @@ type Submission = {
   attachment_urls: unknown[] | null; created_at: string;
 };
 
+type Resource = {
+  id: string; landing_page_id: string; title: string; description: string | null;
+  file_url: string | null; resource_type: string; category: string | null;
+  download_count: number; sort_order: number | null; is_active: boolean;
+};
+
 const PAGE_TYPES = [
   { value: 'job', label: 'Job' },
   { value: 'services', label: 'Services' },
   { value: 'course_request', label: 'Course Request' },
+  { value: 'resource', label: 'Resource' },
   { value: 'custom', label: 'Custom' },
 ] as const;
 
@@ -54,6 +62,7 @@ const SECTION_TYPES = [
   { value: 'text', label: 'Text' },
   { value: 'image', label: 'Image' },
   { value: 'rich_text', label: 'Rich Text' },
+  { value: 'faq', label: 'FAQ' },
 ] as const;
 
 const FIELD_TYPES = [
@@ -71,6 +80,13 @@ const defaultPageForm = {
 };
 
 const getDefaultFormFields = (type: string): Omit<FormField, 'id' | 'landing_page_id'>[] => {
+  if (type === 'resource') {
+    return [
+      { field_label: 'Name', field_type: 'text' as const, is_required: false, options: [], sort_order: 0 },
+      { field_label: 'Email', field_type: 'email' as const, is_required: true, options: [], sort_order: 1 },
+      { field_label: 'WhatsApp Number', field_type: 'phone' as const, is_required: true, options: [], sort_order: 2 },
+    ];
+  }
   const base = [
     { field_label: 'Name', field_type: 'text' as const, is_required: true, options: [], sort_order: 0 },
     { field_label: 'Email', field_type: 'email' as const, is_required: true, options: [], sort_order: 1 },
@@ -107,6 +123,12 @@ const AdminLandingPages = () => {
   const [activeTab, setActiveTab] = useState('settings');
   const [viewingSubmissions, setViewingSubmissions] = useState<string | null>(null);
   const [expandedSubmission, setExpandedSubmission] = useState<string | null>(null);
+
+  // Resource management state
+  const [resources, setResources] = useState<Omit<Resource, 'landing_page_id'>[]>([]);
+  const [resourceForm, setResourceForm] = useState({ title: '', description: '', file_url: '', resource_type: 'free', category: '', is_active: true });
+  const [editingResourceId, setEditingResourceId] = useState<string | null>(null);
+
   const queryClient = useQueryClient();
 
   const { data: pages = [], isLoading } = useQuery({
@@ -126,6 +148,18 @@ const AdminLandingPages = () => {
         .select('*').eq('landing_page_id', viewingSubmissions!).order('created_at', { ascending: false });
       if (error) throw error;
       return data as Submission[];
+    },
+  });
+
+  // Load resources when editing a resource page
+  const { data: dbResources = [] } = useQuery({
+    queryKey: ['admin-resources', editingId],
+    enabled: !!editingId && form.page_type === 'resource',
+    queryFn: async () => {
+      const { data, error } = await supabase.from('resources')
+        .select('*').eq('landing_page_id', editingId!).order('sort_order');
+      if (error) throw error;
+      return data as Resource[];
     },
   });
 
@@ -194,9 +228,30 @@ const AdminLandingPages = () => {
         const { error } = await supabase.from('landing_page_form_fields').insert(fieldPayload);
         if (error) throw error;
       }
+
+      // Save resources for resource pages
+      if (form.page_type === 'resource' && pageId) {
+        // Delete existing resources
+        await supabase.from('resources').delete().eq('landing_page_id', pageId);
+        if (resources.length > 0) {
+          const resPayload = resources.map((r, i) => ({
+            landing_page_id: pageId!,
+            title: r.title,
+            description: r.description || null,
+            file_url: r.file_url || null,
+            resource_type: r.resource_type,
+            category: r.category || null,
+            is_active: r.is_active,
+            sort_order: i,
+          }));
+          const { error } = await supabase.from('resources').insert(resPayload);
+          if (error) throw error;
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-landing-pages'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-resources'] });
       toast.success(editingId ? 'Page updated!' : 'Page created!');
       resetForm();
     },
@@ -219,9 +274,12 @@ const AdminLandingPages = () => {
     setForm(defaultPageForm);
     setSections([]);
     setFormFields([]);
+    setResources([]);
     setEditingId(null);
     setIsDialogOpen(false);
     setActiveTab('settings');
+    setEditingResourceId(null);
+    setResourceForm({ title: '', description: '', file_url: '', resource_type: 'free', category: '', is_active: true });
   };
 
   const openEdit = async (page: LandingPage) => {
@@ -232,13 +290,18 @@ const AdminLandingPages = () => {
     });
     setEditingId(page.id);
 
-    // Load sections and form fields
     const [sectionsRes, fieldsRes] = await Promise.all([
       supabase.from('landing_page_sections').select('*').eq('landing_page_id', page.id).order('sort_order'),
       supabase.from('landing_page_form_fields').select('*').eq('landing_page_id', page.id).order('sort_order'),
     ]);
     setSections((sectionsRes.data || []) as Section[]);
     setFormFields((fieldsRes.data || []) as FormField[]);
+
+    if (page.page_type === 'resource') {
+      const { data } = await supabase.from('resources').select('*').eq('landing_page_id', page.id).order('sort_order');
+      setResources((data || []) as Resource[]);
+    }
+
     setActiveTab('settings');
     setIsDialogOpen(true);
   };
@@ -254,8 +317,9 @@ const AdminLandingPages = () => {
 
   // Section management
   const addSection = (type: Section['section_type']) => {
+    const defaultContent = type === 'faq' ? { items: [{ question: '', answer: '' }] } : {};
     setSections(prev => [...prev, {
-      id: crypto.randomUUID(), section_type: type, title: '', content: {}, sort_order: prev.length,
+      id: crypto.randomUUID(), section_type: type, title: type === 'faq' ? 'Frequently Asked Questions' : '', content: defaultContent, sort_order: prev.length,
     }]);
   };
 
@@ -299,6 +363,49 @@ const AdminLandingPages = () => {
     });
   };
 
+  // Resource management
+  const addResource = () => {
+    if (!resourceForm.title.trim()) { toast.error('Resource title required'); return; }
+    const newResource: Omit<Resource, 'landing_page_id'> = {
+      id: editingResourceId || crypto.randomUUID(),
+      title: resourceForm.title,
+      description: resourceForm.description || null,
+      file_url: resourceForm.file_url || null,
+      resource_type: resourceForm.resource_type,
+      category: resourceForm.category || null,
+      download_count: 0,
+      sort_order: resources.length,
+      is_active: resourceForm.is_active,
+    };
+    if (editingResourceId) {
+      setResources(prev => prev.map(r => r.id === editingResourceId ? { ...r, ...newResource } : r));
+    } else {
+      setResources(prev => [...prev, newResource]);
+    }
+    setResourceForm({ title: '', description: '', file_url: '', resource_type: 'free', category: '', is_active: true });
+    setEditingResourceId(null);
+  };
+
+  const editResource = (r: Omit<Resource, 'landing_page_id'>) => {
+    setEditingResourceId(r.id);
+    setResourceForm({
+      title: r.title, description: r.description || '', file_url: r.file_url || '',
+      resource_type: r.resource_type, category: r.category || '', is_active: r.is_active,
+    });
+  };
+
+  const removeResource = (id: string) => setResources(prev => prev.filter(r => r.id !== id));
+
+  const moveResource = (idx: number, dir: -1 | 1) => {
+    setResources(prev => {
+      const arr = [...prev];
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= arr.length) return arr;
+      [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
+      return arr;
+    });
+  };
+
   // CSV Export
   const exportCSV = () => {
     if (submissions.length === 0) return;
@@ -320,12 +427,16 @@ const AdminLandingPages = () => {
   const filtered = pages.filter(p => p.title.toLowerCase().includes(search.toLowerCase()));
   const typeBadgeVariant = (type: string) => {
     switch (type) {
-      case 'job': return 'default';
-      case 'services': return 'secondary';
-      case 'course_request': return 'outline';
-      default: return 'secondary';
+      case 'job': return 'default' as const;
+      case 'services': return 'secondary' as const;
+      case 'course_request': return 'outline' as const;
+      case 'resource': return 'default' as const;
+      default: return 'secondary' as const;
     }
   };
+
+  const isResourcePage = form.page_type === 'resource';
+  const tabCount = isResourcePage ? 5 : 3;
 
   return (
     <AdminLayout>
@@ -344,6 +455,7 @@ const AdminLandingPages = () => {
                 <SelectItem value="job">Job Page</SelectItem>
                 <SelectItem value="services">Services Page</SelectItem>
                 <SelectItem value="course_request">Course Request</SelectItem>
+                <SelectItem value="resource">Resource Page</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -491,12 +603,15 @@ const AdminLandingPages = () => {
               <DialogTitle>{editingId ? 'Edit' : 'Create'} Landing Page</DialogTitle>
             </DialogHeader>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="w-full grid grid-cols-3">
+              <TabsList className={`w-full grid ${isResourcePage ? 'grid-cols-5' : 'grid-cols-3'}`}>
                 <TabsTrigger value="settings">Settings</TabsTrigger>
                 <TabsTrigger value="sections">Sections</TabsTrigger>
-                <TabsTrigger value="form">Form Builder</TabsTrigger>
+                <TabsTrigger value="form">Form</TabsTrigger>
+                {isResourcePage && <TabsTrigger value="resources">Resources</TabsTrigger>}
+                {isResourcePage && <TabsTrigger value="analytics">Analytics</TabsTrigger>}
               </TabsList>
 
+              {/* Settings Tab */}
               <TabsContent value="settings" className="space-y-4 pt-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -538,6 +653,7 @@ const AdminLandingPages = () => {
                 </div>
               </TabsContent>
 
+              {/* Sections Tab */}
               <TabsContent value="sections" className="space-y-4 pt-4">
                 <div className="flex flex-wrap gap-2">
                   {SECTION_TYPES.map(t => (
@@ -587,7 +703,6 @@ const AdminLandingPages = () => {
                                 <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                                   const file = e.target.files?.[0];
                                   if (!file) return;
-                                  const ext = file.name.split('.').pop();
                                   const path = `landing-images/${Date.now()}-${file.name.replace(/\s+/g, '_')}`;
                                   toast.loading('Uploading image...');
                                   const { error } = await supabase.storage.from('form-attachments').upload(path, file);
@@ -606,12 +721,44 @@ const AdminLandingPages = () => {
                               onChange={e => updateSection(section.id, { content: { ...section.content as Record<string, string>, alt: e.target.value } })} />
                           </div>
                         )}
+                        {section.section_type === 'faq' && (
+                          <div className="space-y-3">
+                            <Input placeholder="Section title" value={section.title || ''} onChange={e => updateSection(section.id, { title: e.target.value })} />
+                            {((section.content as any)?.items || []).map((item: any, faqIdx: number) => (
+                              <div key={faqIdx} className="border border-border/40 rounded-md p-3 space-y-2">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs text-muted-foreground">FAQ #{faqIdx + 1}</span>
+                                  <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => {
+                                    const items = [...((section.content as any)?.items || [])];
+                                    items.splice(faqIdx, 1);
+                                    updateSection(section.id, { content: { ...section.content, items } as any });
+                                  }}><Trash2 className="h-3 w-3" /></Button>
+                                </div>
+                                <Input placeholder="Question" value={item.question || ''} onChange={e => {
+                                  const items = [...((section.content as any)?.items || [])];
+                                  items[faqIdx] = { ...items[faqIdx], question: e.target.value };
+                                  updateSection(section.id, { content: { ...section.content, items } as any });
+                                }} />
+                                <Textarea placeholder="Answer" value={item.answer || ''} rows={2} onChange={e => {
+                                  const items = [...((section.content as any)?.items || [])];
+                                  items[faqIdx] = { ...items[faqIdx], answer: e.target.value };
+                                  updateSection(section.id, { content: { ...section.content, items } as any });
+                                }} />
+                              </div>
+                            ))}
+                            <Button variant="outline" size="sm" onClick={() => {
+                              const items = [...((section.content as any)?.items || []), { question: '', answer: '' }];
+                              updateSection(section.id, { content: { ...section.content, items } as any });
+                            }}><Plus className="h-3 w-3 mr-1" />Add FAQ Item</Button>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
                 </div>
               </TabsContent>
 
+              {/* Form Builder Tab */}
               <TabsContent value="form" className="space-y-4 pt-4">
                 <Button variant="outline" size="sm" onClick={addFormField}>
                   <Plus className="h-3 w-3 mr-1" />Add Field
@@ -655,6 +802,150 @@ const AdminLandingPages = () => {
                   ))}
                 </div>
               </TabsContent>
+
+              {/* Resources Tab (resource pages only) */}
+              {isResourcePage && (
+                <TabsContent value="resources" className="space-y-4 pt-4">
+                  <Card className="border-border/40">
+                    <CardContent className="p-4 space-y-3">
+                      <h4 className="text-sm font-semibold">{editingResourceId ? 'Edit' : 'Add'} Resource</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <Label className="text-xs">Title *</Label>
+                          <Input value={resourceForm.title} onChange={e => setResourceForm({ ...resourceForm, title: e.target.value })} placeholder="Resource title" />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs">Category</Label>
+                          <Input value={resourceForm.category} onChange={e => setResourceForm({ ...resourceForm, category: e.target.value })} placeholder="e.g. Guides, Templates" />
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs">Description</Label>
+                        <Textarea value={resourceForm.description} onChange={e => setResourceForm({ ...resourceForm, description: e.target.value })} placeholder="Brief description" rows={2} />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <Label className="text-xs">File URL / Link</Label>
+                          <div className="flex gap-2">
+                            <Input value={resourceForm.file_url} onChange={e => setResourceForm({ ...resourceForm, file_url: e.target.value })} placeholder="URL or upload" className="flex-1" />
+                            <label className="flex items-center gap-1 px-3 py-2 border border-input rounded-md cursor-pointer hover:bg-muted transition-colors text-xs flex-shrink-0">
+                              <Upload className="h-3.5 w-3.5" /> Upload
+                              <input type="file" className="hidden" onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                const path = `resources/${Date.now()}-${file.name.replace(/\s+/g, '_')}`;
+                                toast.loading('Uploading...');
+                                const { error } = await supabase.storage.from('form-attachments').upload(path, file);
+                                toast.dismiss();
+                                if (error) { toast.error('Upload failed'); return; }
+                                const { data: urlData } = supabase.storage.from('form-attachments').getPublicUrl(path);
+                                setResourceForm(prev => ({ ...prev, file_url: urlData.publicUrl }));
+                                toast.success('Uploaded!');
+                              }} />
+                            </label>
+                          </div>
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs">Type</Label>
+                          <Select value={resourceForm.resource_type} onValueChange={v => setResourceForm({ ...resourceForm, resource_type: v })}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="free">Free</SelectItem>
+                              <SelectItem value="premium">Premium</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Switch checked={resourceForm.is_active} onCheckedChange={v => setResourceForm({ ...resourceForm, is_active: v })} />
+                          <span className="text-xs text-muted-foreground">Active</span>
+                        </div>
+                        <div className="flex gap-2">
+                          {editingResourceId && (
+                            <Button variant="ghost" size="sm" onClick={() => {
+                              setEditingResourceId(null);
+                              setResourceForm({ title: '', description: '', file_url: '', resource_type: 'free', category: '', is_active: true });
+                            }}>Cancel</Button>
+                          )}
+                          <Button size="sm" onClick={addResource}>{editingResourceId ? 'Update' : 'Add'} Resource</Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {resources.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-6">No resources added yet.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {resources.map((r, idx) => (
+                        <Card key={r.id} className="border-border/40">
+                          <CardContent className="p-3 flex items-center gap-3">
+                            <div className="flex items-center gap-1">
+                              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveResource(idx, -1)} disabled={idx === 0}><ArrowUp className="h-3 w-3" /></Button>
+                              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveResource(idx, 1)} disabled={idx === resources.length - 1}><ArrowDown className="h-3 w-3" /></Button>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium truncate">{r.title}</span>
+                                <Badge variant={r.resource_type === 'premium' ? 'secondary' : 'outline'} className="text-xs">{r.resource_type}</Badge>
+                                {r.category && <Badge variant="outline" className="text-xs">{r.category}</Badge>}
+                                {!r.is_active && <Badge variant="destructive" className="text-xs">Inactive</Badge>}
+                              </div>
+                              {r.description && <p className="text-xs text-muted-foreground truncate">{r.description}</p>}
+                            </div>
+                            <span className="text-xs text-muted-foreground">{r.download_count} ↓</span>
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => editResource(r)}><Pencil className="h-3 w-3" /></Button>
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => removeResource(r.id)}><Trash2 className="h-3 w-3" /></Button>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </TabsContent>
+              )}
+
+              {/* Analytics Tab (resource pages only) */}
+              {isResourcePage && (
+                <TabsContent value="analytics" className="space-y-4 pt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <Card className="border-border/40">
+                      <CardContent className="p-4 text-center">
+                        <p className="text-2xl font-bold text-foreground">{submissions.length || 0}</p>
+                        <p className="text-xs text-muted-foreground">Total Submissions</p>
+                      </CardContent>
+                    </Card>
+                    <Card className="border-border/40">
+                      <CardContent className="p-4 text-center">
+                        <p className="text-2xl font-bold text-foreground">{resources.reduce((sum, r) => sum + r.download_count, 0)}</p>
+                        <p className="text-xs text-muted-foreground">Total Downloads</p>
+                      </CardContent>
+                    </Card>
+                    <Card className="border-border/40">
+                      <CardContent className="p-4 text-center">
+                        <p className="text-2xl font-bold text-foreground">{resources.length}</p>
+                        <p className="text-xs text-muted-foreground">Resources</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  {resources.length > 0 && (
+                    <Card className="border-border/40">
+                      <CardContent className="p-4">
+                        <h4 className="text-sm font-semibold mb-4 flex items-center gap-2"><BarChart3 className="h-4 w-4" /> Downloads by Resource</h4>
+                        <ResponsiveContainer width="100%" height={250}>
+                          <BarChart data={resources.map(r => ({ name: r.title.length > 20 ? r.title.slice(0, 20) + '…' : r.title, downloads: r.download_count }))}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                            <YAxis allowDecimals={false} />
+                            <Tooltip />
+                            <Bar dataKey="downloads" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </CardContent>
+                    </Card>
+                  )}
+                </TabsContent>
+              )}
             </Tabs>
 
             <div className="flex justify-end gap-2 pt-4 border-t border-border">

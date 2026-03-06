@@ -472,6 +472,59 @@ export type Database = {
         }
         Relationships: []
       }
+      resources: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          download_count: number
+          file_url: string | null
+          id: string
+          is_active: boolean
+          landing_page_id: string
+          resource_type: string
+          sort_order: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          download_count?: number
+          file_url?: string | null
+          id?: string
+          is_active?: boolean
+          landing_page_id: string
+          resource_type?: string
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          download_count?: number
+          file_url?: string | null
+          id?: string
+          is_active?: boolean
+          landing_page_id?: string
+          resource_type?: string
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resources_landing_page_id_fkey"
+            columns: ["landing_page_id"]
+            isOneToOne: false
+            referencedRelation: "landing_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_content: {
         Row: {
           content: Json | null
@@ -529,6 +582,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_download_count: {
+        Args: { resource_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
@@ -539,10 +596,15 @@ export type Database = {
         | "textarea"
         | "select"
         | "file"
-      landing_page_type: "job" | "services" | "course_request" | "custom"
+      landing_page_type:
+        | "job"
+        | "services"
+        | "course_request"
+        | "custom"
+        | "resource"
       link_category: "header" | "footer" | "external"
       query_status: "new" | "read" | "resolved"
-      section_type: "heading" | "text" | "image" | "rich_text"
+      section_type: "heading" | "text" | "image" | "rich_text" | "faq"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -672,10 +734,16 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "moderator", "user"],
       form_field_type: ["text", "email", "phone", "textarea", "select", "file"],
-      landing_page_type: ["job", "services", "course_request", "custom"],
+      landing_page_type: [
+        "job",
+        "services",
+        "course_request",
+        "custom",
+        "resource",
+      ],
       link_category: ["header", "footer", "external"],
       query_status: ["new", "read", "resolved"],
-      section_type: ["heading", "text", "image", "rich_text"],
+      section_type: ["heading", "text", "image", "rich_text", "faq"],
     },
   },
 } as const
