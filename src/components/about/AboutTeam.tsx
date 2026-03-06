@@ -9,6 +9,7 @@ import teamKamran from "@/assets/team-kamran.png";
 import teamFarhan from "@/assets/team-farhan.png";
 import teamAbdulRehman from "@/assets/team-abdulrehman.png";
 import teamHasnain from "@/assets/team-hasnain.png";
+import teamSalman from "@/assets/team-salman.png";
 
 const team = [
   {
@@ -65,6 +66,14 @@ const team = [
     initials: "MH",
     photo: teamHasnain,
     bio: "Hasnain specializes in cross-platform mobile app development using Flutter and Dart. With a keen eye for smooth UI/UX and performance optimization, he builds beautiful, high-performance mobile applications for both iOS and Android platforms.",
+    socials: { linkedin: "#" },
+  },
+  {
+    name: "Muhammad Salman",
+    role: "Front End Developer",
+    initials: "MS",
+    photo: teamSalman,
+    bio: "Salman is a skilled front-end developer with expertise in modern JavaScript frameworks and responsive design. He transforms creative designs into pixel-perfect, interactive web experiences with clean, maintainable code and attention to detail.",
     socials: { linkedin: "#" },
   },
 ];
