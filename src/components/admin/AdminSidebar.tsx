@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, FileText, MessageSquare,
-  Link2, Layout, Shield, CalendarClock, Layers
+  Link2, Layout, Shield, CalendarClock, Layers, Download
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLocation } from 'react-router-dom';
@@ -15,6 +15,7 @@ const menuItems = [
   { title: 'Dashboard', url: '/admin/dashboard', icon: LayoutDashboard },
   { title: 'Blog', url: '/admin/blog', icon: FileText },
   { title: 'Landing Pages', url: '/admin/landing-pages', icon: Layers },
+  { title: 'Resources', url: '/admin/resources', icon: Download },
   { title: 'Queries', url: '/admin/queries', icon: MessageSquare },
   { title: 'Links', url: '/admin/links', icon: Link2 },
   { title: 'Content', url: '/admin/content', icon: Layout },
