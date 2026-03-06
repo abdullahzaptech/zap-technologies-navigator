@@ -22,6 +22,7 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminBlog from "./pages/AdminBlog";
 import AdminLandingPages from "./pages/AdminLandingPages";
+import AdminResources from "./pages/AdminResources";
 import AdminQueries from "./pages/AdminQueries";
 import AdminLinks from "./pages/AdminLinks";
 import AdminContent from "./pages/AdminContent";
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/blog" element={<ProtectedRoute><AdminBlog /></ProtectedRoute>} />
             <Route path="/admin/landing-pages" element={<ProtectedRoute><AdminLandingPages /></ProtectedRoute>} />
+            <Route path="/admin/resources" element={<ProtectedRoute><AdminResources /></ProtectedRoute>} />
             
             <Route path="/admin/queries" element={<ProtectedRoute><AdminQueries /></ProtectedRoute>} />
             <Route path="/admin/links" element={<ProtectedRoute><AdminLinks /></ProtectedRoute>} />
