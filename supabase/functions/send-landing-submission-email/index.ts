@@ -27,6 +27,7 @@ serve(async (req) => {
     }
 
     const senderEmail = "abdullahdesigner51@gmail.com";
+    const senderFrom = "Zap Technologies <abdullahdesigner51@gmail.com>";
     const typeLabel = (pageType || "").replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
     const dateStr = new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
     const name = (formData as Record<string, string>)?.Name || (formData as Record<string, string>)?.name || "Someone";

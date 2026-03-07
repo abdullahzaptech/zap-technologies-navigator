@@ -83,6 +83,7 @@ serve(async (req) => {
     if (!GMAIL_APP_PASSWORD) throw new Error("GMAIL_APP_PASSWORD not configured");
 
     const senderEmail = "abdullahdesigner51@gmail.com";
+    const senderFrom = "Zap Technologies <abdullahdesigner51@gmail.com>";
     const client = new SMTPClient({
       connection: {
         hostname: "smtp.gmail.com",

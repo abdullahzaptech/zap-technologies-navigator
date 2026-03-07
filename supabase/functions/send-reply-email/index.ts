@@ -90,6 +90,7 @@ serve(async (req) => {
     }
 
     const senderEmail = "abdullahdesigner51@gmail.com";
+    const senderFrom = "Zap Technologies <abdullahdesigner51@gmail.com>";
 
     const client = new SMTPClient({
       connection: {
