@@ -106,6 +106,7 @@ const LandingPage = () => {
           body: {
             pageTitle: page!.title, pageType: page!.page_type,
             formData, attachmentUrls,
+            landingPageId: page!.id,
           },
         });
       } catch (e) {
