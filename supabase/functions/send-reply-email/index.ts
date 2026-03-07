@@ -111,7 +111,7 @@ serve(async (req) => {
     });
 
     await client.send({
-      from: senderEmail,
+      from: senderFrom,
       to: recipientEmail,
       subject: `${subject} — Zap Technologies`,
       content: body,

@@ -175,7 +175,7 @@ serve(async (req) => {
     });
 
     await client.send({
-      from: senderEmail,
+      from: senderFrom,
       to: senderEmail,
       subject: `⚡ New ${inquiryType || "Contact"}: ${name} — Zap Technologies`,
       content: `New form submission from ${name} (${email}):\n\n${message}${projectLink ? `\n\nProject Link: ${projectLink}` : ""}${attachmentUrl ? `\n\nAttachment: ${attachmentUrl}` : ""}`,

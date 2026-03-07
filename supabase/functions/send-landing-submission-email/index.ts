@@ -82,7 +82,7 @@ serve(async (req) => {
     // Send admin notification
     console.log("Sending admin email...");
     await client.send({
-      from: senderEmail,
+      from: senderFrom,
       to: senderEmail,
       subject: "New " + typeLabel + " Submission: " + name + " - " + pageTitle,
       content: "New submission on " + pageTitle + " from " + name,
@@ -167,7 +167,7 @@ serve(async (req) => {
 
       console.log("Sending user email to:", userEmail);
       await client.send({
-        from: senderEmail,
+        from: senderFrom,
         to: userEmail,
         subject: "Your Free Resources from Zap Technologies - " + pageTitle,
         content: "Hi " + name + ", your free resources are ready! Visit " + pageTitle + " to download them.",

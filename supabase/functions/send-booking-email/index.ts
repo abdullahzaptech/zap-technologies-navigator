@@ -96,7 +96,7 @@ serve(async (req) => {
     if (data.type === "new_booking") {
       // Notify admin
       await client.send({
-        from: senderEmail,
+        from: senderFrom,
         to: senderEmail,
         subject: `📅 New Meeting Request: ${data.clientName} — ${data.meetingType}`,
         content: `New booking from ${data.clientName} (${data.clientEmail}) for ${data.meetingType} on ${data.bookingDate} at ${data.bookingTime}`,
@@ -105,7 +105,7 @@ serve(async (req) => {
     } else if (data.type === "booking_confirmed") {
       // Notify client
       await client.send({
-        from: senderEmail,
+        from: senderFrom,
         to: data.clientEmail,
         subject: `✅ Meeting Confirmed — Zap Technologies`,
         content: `Your ${data.meetingType} meeting with Zap Technologies has been confirmed for ${data.bookingDate} at ${data.bookingTime}.`,
