@@ -156,6 +156,7 @@ serve(async (req) => {
     }
 
     const senderEmail = "abdullahdesigner51@gmail.com";
+    const senderFrom = "Zap Technologies <abdullahdesigner51@gmail.com>";
 
     const client = new SMTPClient({
       connection: {
@@ -174,7 +175,7 @@ serve(async (req) => {
     });
 
     await client.send({
-      from: senderEmail,
+      from: senderFrom,
       to: senderEmail,
       subject: `⚡ New ${inquiryType || "Contact"}: ${name} — Zap Technologies`,
       content: `New form submission from ${name} (${email}):\n\n${message}${projectLink ? `\n\nProject Link: ${projectLink}` : ""}${attachmentUrl ? `\n\nAttachment: ${attachmentUrl}` : ""}`,
