@@ -102,14 +102,11 @@ const LandingPage = () => {
       if (error) throw error;
 
       try {
-        const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-        await fetch(`https://${projectId}.supabase.co/functions/v1/send-landing-submission-email`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        await supabase.functions.invoke('send-landing-submission-email', {
+          body: {
             pageTitle: page!.title, pageType: page!.page_type,
             formData, attachmentUrls,
-          }),
+          },
         });
       } catch (e) {
         console.error('Email notification failed:', e);
